@@ -8,6 +8,29 @@
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 
+# 이름이 길면 자동 줄바꿈에 맡기지 않고 띄어쓰기 위치에서 두 줄로 나눈다.
+# (맡겨두면 "... 게시 / 판" 처럼 단어 중간에서 잘린다)
+function Split-BalancedLines([string]$text) {
+    $words = $text -split '\s+' | Where-Object { $_ }
+    if ($words.Count -lt 2) { return $text }
+
+    $bestLine = $text
+    $bestDiff = [int]::MaxValue
+
+    for ($i = 1; $i -lt $words.Count; $i++) {
+        $left = ($words[0..($i - 1)] -join ' ')
+        $right = ($words[$i..($words.Count - 1)] -join ' ')
+        $diff = [math]::Abs(($left -replace '\s', '').Length - ($right -replace '\s', '').Length)
+
+        if ($diff -lt $bestDiff) {
+            $bestDiff = $diff
+            $bestLine = $left + [char]10 + $right
+        }
+    }
+
+    return $bestLine
+}
+
 $root = Split-Path -Parent $PSScriptRoot
 $site = Get-Content (Join-Path $root 'src\data\site.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $outPath = Join-Path $root 'public\og-default.png'
@@ -43,17 +66,27 @@ try {
     $format.Alignment = [System.Drawing.StringAlignment]::Center
     $format.LineAlignment = [System.Drawing.StringAlignment]::Center
 
-    $titleFont = New-Object System.Drawing.Font('Malgun Gothic', 68, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
+    # 이름이 길면 두 줄로 나누고 글자도 조금 줄인다.
+    if ($site.name.Length -gt 12) {
+        $titleText = Split-BalancedLines $site.name
+        $titleSize = 62
+    }
+    else {
+        $titleText = $site.name
+        $titleSize = 72
+    }
+
+    $titleFont = New-Object System.Drawing.Font('Malgun Gothic', $titleSize, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
     $taglineFont = New-Object System.Drawing.Font('Malgun Gothic', 34, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
 
     $softColor = [System.Drawing.Color]::FromArgb(215, 232, 244, 255)
     $white = [System.Drawing.Brushes]::White
     $soft = New-Object System.Drawing.SolidBrush -ArgumentList $softColor
 
-    $titleRect = New-Object System.Drawing.RectangleF(80, 220, ($width - 160), 110)
-    $taglineRect = New-Object System.Drawing.RectangleF(80, 340, ($width - 160), 70)
+    $titleRect = New-Object System.Drawing.RectangleF(80, 180, ($width - 160), 200)
+    $taglineRect = New-Object System.Drawing.RectangleF(80, 400, ($width - 160), 70)
 
-    $graphics.DrawString($site.name, $titleFont, $white, $titleRect, $format)
+    $graphics.DrawString($titleText, $titleFont, $white, $titleRect, $format)
     $graphics.DrawString($site.tagline, $taglineFont, $soft, $taglineRect, $format)
 
     $bitmap.Save($outPath, [System.Drawing.Imaging.ImageFormat]::Png)

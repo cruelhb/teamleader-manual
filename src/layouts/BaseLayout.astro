@@ -61,7 +61,8 @@ const favicon =
   <body>
     <header class="site-header">
       <div class="wrap site-header__bar">
-        <a class="site-header__logo" href="/">📌 {site.name}</a>
+        {/* 헤더는 좁은 폰 화면을 고려해 짧은 이름을 쓴다 (전체 이름은 제목·미리보기에 사용) */}
+        <a class="site-header__logo" href="/">📌 {site.shortName}</a>
       </div>
     </header>
 

@@ -1,0 +1,37 @@
+---
+import { formatDate } from '../lib/format';
+
+interface Props {
+  url: string;
+  title: string;
+  summary: string;
+  updated: Date | string;
+  pinned?: boolean;
+  /** 카테고리 배지를 보여줄지 (카테고리 목록 안에서는 중복이라 끈다) */
+  categoryLabel?: string;
+  categoryEmoji?: string;
+}
+
+const { url, title, summary, updated, pinned = false, categoryLabel, categoryEmoji } = Astro.props;
+---
+
+<li>
+  <a class="card" href={url}>
+    {
+      (pinned || categoryLabel) && (
+        <div class="card__top">
+          {pinned && <span class="badge badge--pinned">📌 중요</span>}
+          {categoryLabel && (
+            <span class="badge">
+              <span aria-hidden="true">{categoryEmoji}</span>
+              {categoryLabel}
+            </span>
+          )}
+        </div>
+      )
+    }
+    <h3 class="card__title">{title}</h3>
+    <p class="card__summary">{summary}</p>
+    <span class="meta">{formatDate(updated)} 기준</span>
+  </a>
+</li>

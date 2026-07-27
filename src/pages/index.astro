@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBox from '../components/SearchBox.astro';
+import DocCard from '../components/DocCard.astro';
+import site from '../data/site.json';
+import shortcuts from '../data/shortcuts.json';
+import { CATEGORIES } from '../lib/categories';
+import { sortDocs } from '../lib/docs';
+
+const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort).slice(0, 3);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <h1 class="hero__title">{site.name}</h1>
+    <p class="hero__tagline">{site.tagline}</p>
+    <SearchBox />
+  </section>
+
+  {/* 검색을 시작하면 이 아래 영역은 숨겨진다 (SearchBox 스크립트가 제어) */}
+  <div data-home-body>
+    <section class="section">
+      <h2 class="section__title">자주 찾는 항목</h2>
+      <ul class="shortcut-grid">
+        {
+          shortcuts.map((shortcut) => (
+            <li>
+              <a class="shortcut" href={shortcut.url}>
+                <span class="shortcut__emoji" aria-hidden="true">
+                  {shortcut.emoji}
+                </span>
+                {shortcut.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">
+        최신 공지
+        <a class="section__more" href="/notice/">전체 보기 →</a>
+      </h2>
+
+      {
+        notices.length > 0 ? (
+          <ul class="card-list">
+            {notices.map((notice) => (
+              <DocCard
+                url={`/notice/${notice.id}/`}
+                title={notice.data.title}
+                summary={notice.data.summary}
+                updated={notice.data.updated}
+                pinned={notice.data.pinned}
+              />
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">아직 등록된 공지가 없습니다.</p>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>

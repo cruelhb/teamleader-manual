@@ -1,0 +1,78 @@
+---
+import site from '../data/site.json';
+
+// site.json 의 reportUrl 이 비어 있으면 제보 버튼을 숨긴다.
+// (제보 창구 주소를 받으면 site.json 한 줄만 채우면 됩니다)
+const reportUrl = site.reportUrl?.trim();
+---
+
+<div class="doc-actions">
+  <button class="btn btn--primary" type="button" data-share-button>
+    <span aria-hidden="true">🔗</span>
+    <span data-share-label>링크 복사</span>
+  </button>
+
+  {
+    reportUrl ? (
+      <a class="btn" href={reportUrl} target="_blank" rel="noopener noreferrer">
+        <span aria-hidden="true">🚨</span>
+        {site.reportLabel}
+      </a>
+    ) : null
+  }
+</div>
+
+<script>
+  // 카카오톡 단톡방에 붙여넣기 좋게 현재 문서 주소를 복사한다.
+  // clipboard API 는 https 또는 localhost 에서만 동작하므로 폴백을 함께 둔다.
+  document.querySelectorAll<HTMLButtonElement>('[data-share-button]').forEach((button) => {
+    const label = button.querySelector('[data-share-label]');
+    if (!label) return;
+
+    const originalText = label.textContent ?? '링크 복사';
+
+    const flash = (message: string) => {
+      label.textContent = message;
+      button.dataset.copied = 'true';
+      window.setTimeout(() => {
+        label.textContent = originalText;
+        delete button.dataset.copied;
+      }, 1800);
+    };
+
+    const copyFallback = (text: string): boolean => {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      let ok = false;
+      try {
+        ok = document.execCommand('copy');
+      } catch {
+        ok = false;
+      }
+      document.body.removeChild(textarea);
+      return ok;
+    };
+
+    button.addEventListener('click', async () => {
+      const url = window.location.href;
+
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(url);
+          flash('복사했어요!');
+          return;
+        } catch {
+          // 권한이 막혔으면 아래 폴백으로 내려간다
+        }
+      }
+
+      flash(copyFallback(url) ? '복사했어요!' : '복사 실패 — 주소창을 길게 눌러 복사해 주세요');
+    });
+  });
+</script>

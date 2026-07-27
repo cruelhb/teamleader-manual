@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+import site from '../data/site.json';
+import { CATEGORIES, CATEGORY_ORDER, type CategoryKey } from '../lib/categories';
+
+interface Props {
+  /** 브라우저 탭 / 카카오톡 미리보기 제목. 없으면 사이트 이름만 쓴다. */
+  title?: string;
+  /** 카카오톡 미리보기 설명 */
+  description?: string;
+  /** 현재 활성화된 카테고리 (네비게이션 강조용) */
+  activeCategory?: CategoryKey;
+  /** og:type — 문서 페이지는 'article' */
+  ogType?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = site.description,
+  activeCategory,
+  ogType = 'website',
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name} — ${site.tagline}`;
+
+// 카카오톡 링크 미리보기는 절대 URL만 인식한다. astro.config.mjs 의 site 값을 기준으로 만든다.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-default.png', Astro.site);
+
+// 이모지를 그대로 파비콘으로 쓴다 (별도 이미지 파일 불필요)
+const favicon =
+  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📌</text></svg>";
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" href={favicon} />
+
+    {/* 사내 안내용 사이트 — 검색엔진에 노출되지 않게 한다 */}
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+
+    {/* 카카오톡·슬랙 등 링크 미리보기용 */}
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title ?? site.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#1f5fa9" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="wrap site-header__bar">
+        <a class="site-header__logo" href="/">📌 {site.name}</a>
+      </div>
+    </header>
+
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <ul class="site-nav__list">
+        {
+          CATEGORY_ORDER.map((key) => (
+            <li>
+              <a
+                class="site-nav__link"
+                href={`/${key}/`}
+                aria-current={activeCategory === key ? 'page' : undefined}
+              >
+                <span aria-hidden="true">{CATEGORIES[key].emoji}</span>
+                {CATEGORIES[key].label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <main>
+      <div class="wrap">
+        <slot />
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>{site.footerNote}</p>
+      </div>
+    </footer>
+  </body>
+</html>

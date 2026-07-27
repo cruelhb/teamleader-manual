@@ -1,0 +1,95 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ShareButton from '../components/ShareButton.astro';
+import { CATEGORIES, type CategoryKey } from '../lib/categories';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  category: CategoryKey;
+  title: string;
+  summary: string;
+  updated: Date | string;
+  source?: string;
+  file?: string;
+}
+
+const { category, title, summary, updated, source, file } = Astro.props;
+const categoryInfo = CATEGORIES[category];
+---
+
+<BaseLayout title={title} description={summary} activeCategory={category} ogType="article">
+  <article class="doc">
+    <p class="doc__breadcrumb">
+      <a href={`/${category}/`}>
+        {categoryInfo.emoji}
+        {categoryInfo.label}
+      </a>
+    </p>
+
+    <h1 class="doc__title">{title}</h1>
+
+    <div class="doc__meta">
+      <span><strong>최종 수정일</strong> {formatDate(updated)}</span>
+      {source && <span><strong>근거</strong> {source}</span>}
+    </div>
+
+    {
+      file && (
+        <p>
+          <a class="btn btn--primary" href={file} download>
+            <span aria-hidden="true">⬇️</span> 서식 내려받기
+          </a>
+        </p>
+      )
+    }
+
+    <div class="prose" data-prose>
+      <slot />
+    </div>
+
+    <ShareButton />
+  </article>
+</BaseLayout>
+
+<script>
+  // 1) 좁은 화면에서 표가 페이지를 밀지 않도록 가로 스크롤 컨테이너로 감싼다.
+  document.querySelectorAll<HTMLTableElement>('[data-prose] table').forEach((table) => {
+    if (table.parentElement?.classList.contains('table-scroll')) return;
+    const scroller = document.createElement('div');
+    scroller.className = 'table-scroll';
+    table.replaceWith(scroller);
+    scroller.appendChild(table);
+  });
+
+  // 2) 스크린샷을 탭하면 전체 화면으로 확대한다.
+  //    폰에서 캡처 속 작은 글씨를 읽으려면 이게 없으면 답이 없다.
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+  lightbox.hidden = true;
+  lightbox.innerHTML =
+    '<button class="lightbox__close" type="button" aria-label="닫기">✕</button><img alt="" />';
+  document.body.appendChild(lightbox);
+
+  const lightboxImage = lightbox.querySelector('img')!;
+
+  const closeLightbox = () => {
+    lightbox.hidden = true;
+    lightboxImage.removeAttribute('src');
+    document.body.style.overflow = '';
+  };
+
+  document.querySelectorAll<HTMLImageElement>('[data-prose] img').forEach((image) => {
+    image.style.cursor = 'zoom-in';
+    image.addEventListener('click', () => {
+      lightboxImage.src = image.currentSrc || image.src;
+      lightboxImage.alt = image.alt;
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  lightbox.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
+  });
+</script>

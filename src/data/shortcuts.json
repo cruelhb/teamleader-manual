@@ -1,0 +1,10 @@
+[
+  { "label": "연차 사용 기준", "url": "/welfare/연차-사용-기준/", "emoji": "🌴" },
+  { "label": "경조휴가 일수", "url": "/welfare/경조휴가-일수/", "emoji": "🎋" },
+  { "label": "경조금 신청", "url": "/faq/경조금-어떻게-신청하나요/", "emoji": "💌" },
+  { "label": "교육비 지원", "url": "/welfare/교육비-지원/", "emoji": "📚" },
+  { "label": "건강검진 안내", "url": "/welfare/건강검진-안내/", "emoji": "🩺" },
+  { "label": "휴가원 양식", "url": "/form/휴가원/", "emoji": "📄" },
+  { "label": "전산 비밀번호 변경", "url": "/guide/전산-비밀번호-변경/", "emoji": "🔑" },
+  { "label": "전체 공지 보기", "url": "/notice/", "emoji": "📢" }
+]

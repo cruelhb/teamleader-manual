@@ -1,0 +1,35 @@
+---
+import { getCollection, render } from 'astro:content';
+import DocLayout from '../../layouts/DocLayout.astro';
+import { CATEGORY_ORDER } from '../../lib/categories';
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const category of CATEGORY_ORDER) {
+    const entries = await getCollection(category);
+    for (const entry of entries) {
+      paths.push({
+        params: { category, slug: entry.id },
+        props: { entry, category },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { entry, category } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<DocLayout
+  category={category}
+  title={entry.data.title}
+  summary={entry.data.summary}
+  updated={entry.data.updated}
+  source={entry.data.source}
+  file={entry.data.file}
+>
+  <Content />
+</DocLayout>

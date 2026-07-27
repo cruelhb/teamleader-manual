@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DocCard from '../../components/DocCard.astro';
+import { CATEGORIES, CATEGORY_ORDER, type CategoryKey } from '../../lib/categories';
+import { sortDocs } from '../../lib/docs';
+
+export async function getStaticPaths() {
+  return Promise.all(
+    CATEGORY_ORDER.map(async (category) => {
+      const entries = await getCollection(category);
+      const docs = sortDocs(entries, CATEGORIES[category].sort).map((entry) => ({
+        id: entry.id,
+        title: entry.data.title,
+        summary: entry.data.summary,
+        updated: entry.data.updated,
+        pinned: entry.data.pinned,
+      }));
+
+      return { params: { category }, props: { category, docs } };
+    }),
+  );
+}
+
+const { category, docs } = Astro.props as {
+  category: CategoryKey;
+  docs: Array<{ id: string; title: string; summary: string; updated: Date; pinned: boolean }>;
+};
+
+const info = CATEGORIES[category];
+---
+
+<BaseLayout title={info.label} description={info.description} activeCategory={category}>
+  <h1 class="page-title">{info.emoji} {info.label}</h1>
+  <p class="page-desc">{info.description}</p>
+
+  {
+    docs.length > 0 ? (
+      <ul class="card-list">
+        {docs.map((doc) => (
+          <DocCard
+            url={`/${category}/${doc.id}/`}
+            title={doc.title}
+            summary={doc.summary}
+            updated={doc.updated}
+            pinned={doc.pinned}
+          />
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">아직 등록된 내용이 없습니다.</p>
+    )
+  }
+</BaseLayout>

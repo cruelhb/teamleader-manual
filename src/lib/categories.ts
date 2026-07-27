@@ -24,7 +24,7 @@ export const CATEGORIES: Record<CategoryKey, CategoryInfo> = {
     sort: 'date',
   },
   guide: {
-    label: '이용 방법',
+    label: '업무 매뉴얼',
     emoji: '📘',
     description: '전산·시스템 사용법을 화면 캡처와 함께 단계별로 안내합니다.',
     sort: 'order',

@@ -30,7 +30,10 @@ const { category, docs } = Astro.props as {
 const info = CATEGORIES[category];
 ---
 
-<BaseLayout title={info.label} description={info.description} activeCategory={category}>
+<BaseLayout title={info.label} description={info.description}>
+  {/* 상단 메뉴바가 없으므로 홈으로 돌아가는 길을 명시한다 */}
+  <p class="doc__breadcrumb"><a href="/">← 홈</a></p>
+
   <h1 class="page-title">{info.emoji} {info.label}</h1>
   <p class="page-desc">{info.description}</p>
 

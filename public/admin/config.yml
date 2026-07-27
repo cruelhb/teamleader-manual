@@ -76,10 +76,10 @@ collections:
         widget: markdown
         modes: [raw, rich_text]
 
-  # ────────────────────────────── 이용 방법
+  # ────────────────────────────── 업무 매뉴얼
   - name: guide
-    label: 이용 방법
-    label_singular: 이용 방법 문서
+    label: 업무 매뉴얼
+    label_singular: 업무 매뉴얼 문서
     description: 전산·시스템 사용법을 화면 캡처와 함께 단계별로 안내합니다.
     folder: src/content/guide
     create: true

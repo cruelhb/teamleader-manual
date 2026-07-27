@@ -5,7 +5,7 @@ import SearchBox from '../components/SearchBox.astro';
 import DocCard from '../components/DocCard.astro';
 import site from '../data/site.json';
 import shortcuts from '../data/shortcuts.json';
-import { CATEGORIES } from '../lib/categories';
+import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
 import { sortDocs } from '../lib/docs';
 
 const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort).slice(0, 3);
@@ -20,6 +20,25 @@ const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort).
 
   {/* 검색을 시작하면 이 아래 영역은 숨겨진다 (SearchBox 스크립트가 제어) */}
   <div data-home-body>
+    <section class="section">
+      <h2 class="section__title">메뉴</h2>
+      <nav class="menu-list" aria-label="주요 메뉴">
+        {
+          CATEGORY_ORDER.map((key) => (
+            <a class="menu-item" href={`/${key}/`}>
+              <span class="menu-item__emoji" aria-hidden="true">
+                {CATEGORIES[key].emoji}
+              </span>
+              <span class="menu-item__body">
+                <strong class="menu-item__label">{CATEGORIES[key].label}</strong>
+                <span class="menu-item__desc">{CATEGORIES[key].description}</span>
+              </span>
+            </a>
+          ))
+        }
+      </nav>
+    </section>
+
     <section class="section">
       <h2 class="section__title">자주 찾는 항목</h2>
       <ul class="shortcut-grid">

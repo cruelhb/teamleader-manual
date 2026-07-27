@@ -17,7 +17,7 @@ const { category, title, summary, updated, source, file } = Astro.props;
 const categoryInfo = CATEGORIES[category];
 ---
 
-<BaseLayout title={title} description={summary} activeCategory={category} ogType="article">
+<BaseLayout title={title} description={summary} ogType="article">
   <article class="doc">
     <p class="doc__breadcrumb">
       <a href={`/${category}/`}>

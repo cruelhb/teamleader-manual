@@ -160,55 +160,6 @@ input {
   text-decoration: none;
 }
 
-.site-nav {
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.site-nav::-webkit-scrollbar {
-  display: none;
-}
-
-.site-nav__list {
-  display: flex;
-  gap: 4px;
-  margin: 0;
-  padding: 8px var(--gutter);
-  list-style: none;
-  width: max-content;
-  min-width: 100%;
-}
-
-.site-nav__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  color: var(--text-muted);
-  font-size: 0.94rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.site-nav__link:hover {
-  background: var(--surface-alt);
-  text-decoration: none;
-}
-
-.site-nav__link[aria-current='page'] {
-  background: var(--brand);
-  color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  .site-nav__link[aria-current='page'] {
-    color: #10161d;
-  }
-}
-
 main {
   padding: 28px 0 64px;
 }
@@ -356,6 +307,70 @@ main {
 .section__more {
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+/* 홈 메뉴 — 상단 메뉴바 대신 홈에 배치한 카테고리 목록 */
+
+.menu-list {
+  display: grid;
+  gap: 8px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.menu-item:hover {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-lift);
+  text-decoration: none;
+}
+
+.menu-item__emoji {
+  flex: none;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.menu-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.menu-item__label {
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.menu-item__desc {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* 오른쪽 꺾쇠 */
+.menu-item::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-right: 2px solid var(--text-faint);
+  border-top: 2px solid var(--text-faint);
+  transform: rotate(45deg);
 }
 
 .shortcut-grid {

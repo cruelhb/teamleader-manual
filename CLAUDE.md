@@ -1,0 +1,166 @@
+# 프로젝트 인수인계 문서
+
+이 파일은 새 세션에서 작업을 이어받기 위한 문서다. 사용자 대상 문서는
+[README.md](README.md)(실행 방법)와 [CONTENT_GUIDE.md](CONTENT_GUIDE.md)(글 작성법)에 따로 있다.
+
+---
+
+## 1. 무엇을 만들고 있는가
+
+보험사별 서면심사팀으로 구성된 **서면심사본부**의 전 인원 공통 규정·공지·업무 매뉴얼을
+**개인 폰에서 바로 확인**할 수 있게 하는 정적 사이트.
+
+**해결하려는 문제**: 각 사무실은 보험사 전용 VPN 장비로 전산을 쓰기 때문에 개인 PC에서
+회사 인트라넷에 접근할 수 없다. 인트라넷은 **사무실당 공용 PC 1대**에서만 열린다.
+그래서 복지 규정 하나 확인하려고 줄을 서거나 팀장에게 카톡으로 물어봐야 했고,
+팀장은 같은 질문에 반복해서 답하고 있었다.
+
+**설계의 뿌리**: 실제 소통이 **카카오톡 단톡방**에서 이뤄진다. 그래서
+"단톡방 질문에 링크 하나로 답한다"가 모든 설계 결정의 기준이다.
+→ 외부 인터넷 호스팅, 모바일 우선, 항목별 딥링크, OG 미리보기, 검색 최우선.
+
+## 2. 사용자에 대해
+
+- **비개발자 팀장**이며 이 사이트를 **혼자** 작성·수정·배포한다.
+- 대화는 **한국어**로 한다. 커밋 메시지도 한국어로 쓴다.
+- 개발 용어를 최소화하고, 단계별로 안내한다.
+- GitHub 계정 `cruelhb` 보유. Cloudflare 계정 보유.
+
+## 3. 현재 상태 (배포 완료)
+
+| | 주소 |
+| --- | --- |
+| 사이트 | <https://teamleader-manual.pages.dev> |
+| 관리자 화면 | <https://teamleader-manual.pages.dev/admin/> |
+| 저장소 (**공개**) | <https://github.com/cruelhb/teamleader-manual> |
+
+`main` 에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포한다.
+빌드 설정: Framework `Astro` / Build `npm run build` / Output `dist` / `NODE_VERSION=22`.
+
+### 콘텐츠 현황
+
+**실제 내용 완성 (2건)**
+
+- `welfare/경조사-안내.md` — 경조휴가 + 경조사비 통합. 대분류 펼침 방식
+- `guide/팀별-잔여-회식비-조회.md` — 사용자가 CMS로 직접 작성
+
+**아직 샘플, 가짜 내용 (6건)** — 상단에 "⚠️ 이 문서는 샘플입니다" 경고가 박혀 있다.
+팀원에게 링크 공유 전에 실제 내용으로 바꾸거나 삭제해야 한다.
+
+- `notice/사이트-오픈-안내.md`
+- `guide/전산-비밀번호-변경.md`
+- `welfare/연차-사용-기준.md`, `welfare/교육비-지원.md`, `welfare/건강검진-안내.md`
+- `form/휴가원.md`
+
+FAQ 카테고리는 **비어 있다**(경조금 FAQ를 통합 문서로 흡수함).
+
+## 4. 기술 구성
+
+- **Astro 5** 정적 사이트. 콘텐츠 컬렉션 5개 = 메뉴 5개
+  (`notice` 공지사항 / `guide` 업무 매뉴얼 / `welfare` 복지·인사 / `faq` FAQ / `form` 서식·양식)
+- **검색**: 서버·DB 없이 빌드 시 `search-index.json` 생성 → 클라이언트에서 매칭.
+  **한글 초성 검색 자체 구현** (`src/lib/hangul.ts`, `src/lib/search.ts`)
+- **관리자 화면**: Sveltia CMS (`src/pages/admin/index.astro` + `public/admin/config.yml`)
+- **호스팅**: Cloudflare Pages (무료, 월 500회 빌드, 트래픽 무제한)
+
+### 건드릴 일 있는 파일
+
+```
+src/content/<카테고리>/*.md   글 (여기가 대부분의 작업)
+src/data/site.json             사이트 이름, 제보 링크
+src/data/shortcuts.json        홈 "자주 찾는 항목" 타일
+src/lib/categories.ts          메뉴 이름·설명·정렬 방식
+public/admin/config.yml        관리자 화면 입력칸
+scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트명 바꾸면 재실행)
+```
+
+## 5. 이미 정해진 것 — 다시 꺼내지 말 것
+
+사용자가 명시적으로 결정했거나 내 제안을 되돌린 사항들이다.
+
+1. **전사 공통 내용만 다룬다.** 팀(보험사)별로 다른 업무는 이 사이트에서 다루지 않는다.
+   `teams` 필드·팀 필터 UI를 데이터 모델에서 **의도적으로 제거**했다.
+2. **팀별 연락처·조직도는 넣지 않는다.** 기존 모바일 인트라넷에 이미 있어 중복이다.
+3. **캡처 마스킹 규칙은 불필요하다.** 올라가는 건 사용법과 기본 규정뿐이라 고객
+   개인정보가 포함될 여지가 없다는 것이 사용자 판단이다. 처음에 내가 넣었던
+   마스킹 절차는 사용자 요청으로 삭제했다.
+4. **완전 공개 + 검색엔진 색인 차단**(`robots.txt` + `noindex` 메타). 비밀번호 잠금 없음.
+5. **상단 메뉴바 없음.** 홈이 유일한 허브다. 카테고리 페이지에는 `← 홈` 링크,
+   문서 페이지에는 카테고리 breadcrumb이 있다.
+6. **저장소는 공개(public).** 비공개를 권했으나 사용자가 공개를 선택했다.
+
+## 6. 주의사항 (실제로 문제가 됐던 것들)
+
+### 콘텐츠
+
+- **`<details>` 안의 마크다운은 빈 줄이 필수다.** `<summary>` 다음 줄과 `</details>`
+  앞에 빈 줄이 없으면 표가 표로 렌더링되지 않고 글자 그대로 나온다.
+- **CMS 본문 편집은 `raw` 모드가 기본**이며 그대로 둬야 한다. `rich_text`(위지윅)로
+  바꾸면 `<details>` 구조가 깨진다. `config.yml` 에 `modes: [raw, rich_text]` 로
+  raw를 앞에 둔 이유다.
+- **검색 본문 색인 상한은 4000자**(`src/pages/search-index.json.ts`의 `BODY_LIMIT`).
+  1000자였을 때 긴 문서 뒷부분이 검색에서 통째로 빠지는 문제가 있었다.
+- **초성 매칭은 제목·태그·요약에만** 적용한다. 본문까지 초성 매칭하면 `ㅇㅊ` 두 글자가
+  긴 본문 아무 데나 걸려서 관계없는 문서가 딸려 온다.
+- **본문에 괄호가 끼면 검색이 끊긴다.** 예: "다(多)자녀"는 `다자녀`로 검색되지 않아
+  태그로 보완했다. 이런 표기를 쓸 때는 태그를 같이 넣을 것.
+- `tags` 를 넉넉히 넣는 것이 검색 품질을 좌우한다. 팀원은 규정집 용어가 아니라
+  자기 말(상갓집, 부고, 청첩장)로 검색한다.
+
+### 환경 (Windows)
+
+- **PowerShell 도구에서 `node`/`npm` 이 PATH에 없다.** 명령 앞에 아래를 붙여야 한다.
+  ```
+  $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+  ```
+- `.claude/launch.json` 은 같은 이유로 `node.exe` **절대경로**를 쓴다.
+  (`C:\Program Files\nodejs\node.exe` + `node_modules/astro/astro.js dev`)
+- **Astro 개발 서버는 `public/` 의 디렉터리 인덱스를 못 찾는다.** 그래서 관리자
+  화면을 `public/admin/index.html` 이 아니라 `src/pages/admin/index.astro` 에 뒀다.
+  (그래야 개발·배포 양쪽에서 `/admin/` 이 동작)
+- 커밋은 그냥 `git commit` 을 쓰면 된다. 전역 설정이 GitHub **noreply 이메일**로
+  되어 있고, 공개 저장소라 실제 이메일이 노출되면 안 된다. `-c user.email` 로
+  덮어쓰지 말 것.
+
+### 관리자 화면
+
+- **`Sign In with GitHub` 버튼은 동작하지 않는다.** Sveltia CMS가 Netlify 인증 서버를
+  기본값으로 호출해서 `api.netlify.com ... Not Found` 가 뜬다. Cloudflare 배포이므로
+  **`Sign In Using Access Token`**(GitHub 개인 액세스 토큰)을 써야 한다.
+  버튼을 살리려면 Cloudflare Workers에 인증 중계 서버를 따로 배포해야 한다(미구현).
+- **CMS가 빈 항목을 `null` 로 저장한다.** `src/content.config.ts` 의 스키마가
+  `nullish().transform()` 으로 이를 흡수하고 있으니 건드리지 말 것.
+
+## 7. 검증 방법
+
+브라우저 도구로 직접 확인한다. 사용자에게 "확인해 보세요"라고 떠넘기지 않는다.
+
+```bash
+npm run dev            # http://localhost:4321
+npm run build          # 배포 전 확인. frontmatter 누락 시 실패해야 정상
+```
+
+`preview_start` 로 로컬(`localhost:4321`) 또는 배포 사이트를 열고,
+`javascript_tool` 로 검색·표·펼침 목록·OG 태그를 점검해 왔다.
+`computer{action:"screenshot"}` 은 브라우저 창이 표시돼 있지 않으면 실패하므로,
+`read_page` 와 `javascript_tool` 위주로 검증하는 편이 낫다.
+
+검색 회귀 테스트에 써온 검색어: `ㄱㅈㅅ`(경조사) `ㅎㅅㅂ`(회식비) `부고` `청첩장`
+`재혼` `OJT` `마이페이지` `증빙`
+
+## 8. 남은 일
+
+1. **샘플 문서 6건 정리** — 실제 내용으로 교체하거나 삭제. 팀원 공유 전 필수.
+2. **카카오 오픈채팅 링크** — `src/data/site.json` 의 `reportUrl` 에 넣으면
+   모든 문서 하단에 제보 버튼이 생긴다. 지금은 비어 있어 버튼이 숨겨진 상태.
+3. **FAQ 채우기** — 카테고리가 비어 있다. 실제 자주 묻는 질문을 받아 작성.
+4. (선택) `Sign In with GitHub` 을 살리는 OAuth 중계 서버 배포.
+
+## 9. 최근 작업 흐름 요약
+
+초기 구축 → 경조사 규정 실제 내용 반영 → 경조사 문서 3건을 대분류 펼침 방식
+단일 문서로 통합 → 관리자 화면(Sveltia CMS) 추가 → 사이트명·메뉴명 변경 및
+상단 메뉴바 제거 → 경조사 표에서 가·나·다 구분 제거하고 직원지급분 있음/없음 표기 →
+GitHub 공개 저장소 푸시 → Cloudflare Pages 배포 완료.
+
+`git log` 에 한국어 커밋 메시지로 남아 있으니 필요하면 참고할 것.

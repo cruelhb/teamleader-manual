@@ -1,0 +1,24 @@
+---
+// 글 등록·수정용 관리자 화면 (Sveltia CMS)
+//
+// public/ 이 아니라 여기에 둔 이유: public 폴더에 넣으면 개발 서버에서
+// /admin/ 주소가 404 가 되고 /admin/index.html 로만 열린다.
+// 페이지 라우트로 두면 개발·배포 양쪽에서 /admin/ 이 그대로 동작한다.
+//
+// 입력 항목 설정은 public/admin/config.yml 에 있다.
+import site from '../../data/site.json';
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>글 등록 · 수정 | {site.name}</title>
+  </head>
+  <body>
+    {/* type="module" 을 붙이면 동작하지 않는다. is:inline 으로 그대로 내보낸다. */}
+    <script is:inline src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+  </body>
+</html>

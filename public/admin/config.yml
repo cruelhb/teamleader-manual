@@ -6,13 +6,11 @@
 
 backend:
   name: github
-  # GitHub 저장소를 만든 뒤 아래를 "내계정이름/teamleader-manual" 로 바꾸세요.
-  # 내 PC에서만 쓸 때는 이 값이 달라도 상관없습니다. (로컬 저장소 모드)
-  repo: CHANGE-ME/teamleader-manual
+  repo: cruelhb/teamleader-manual
   branch: main
 
-# 배포 후 실제 주소로 바꾸면 관리자 화면에서 "사이트 보기" 링크가 동작합니다.
-# site_url: https://teamleader-manual.pages.dev
+# 관리자 화면에서 "사이트 보기" 링크가 가리키는 주소
+site_url: https://teamleader-manual.pages.dev
 
 # 이미지 업로드 위치. 화면에서 드래그하면 여기에 저장됩니다.
 media_folder: public/img

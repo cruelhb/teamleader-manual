@@ -5,6 +5,18 @@
 사무실 공용 PC로만 인트라넷에 접근할 수 있는 환경이라, **외부 인터넷에 올려서
 단톡방에 링크 하나로 답할 수 있게** 만드는 것이 목적입니다.
 
+| | 주소 |
+| --- | --- |
+| 🌐 사이트 | <https://teamleader-manual.pages.dev> |
+| ✏️ 글 등록·수정 | <https://teamleader-manual.pages.dev/admin/> |
+| 📦 저장소 | <https://github.com/cruelhb/teamleader-manual> |
+
+`main` 브랜치에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포합니다.
+
+> ⚠️ 관리자 화면에서 **`Sign In with GitHub` 버튼은 동작하지 않습니다** (Netlify 전용).
+> 아래쪽 **`Sign In Using Access Token`** 을 쓰세요. 발급 방법은
+> [CONTENT_GUIDE.md](CONTENT_GUIDE.md) 2장에 있습니다.
+
 ---
 
 ## 사이트 켜기 (내 PC에서 확인)
@@ -92,20 +104,10 @@ public/admin/
 `src/data/site.json` 의 `reportUrl` 에 카카오 오픈채팅 주소를 넣으면
 모든 문서 하단에 **제보 버튼**이 생깁니다. 비어 있으면 버튼이 보이지 않습니다.
 
-### 3. 배포하기
+### 3. 팀원에게 공유하기
 
-팀원이 실제로 볼 수 있게 하려면 배포가 필요합니다. 무료입니다.
-
-1. **GitHub 계정** 만들고 저장소 생성 → `git push`
-2. **Cloudflare 계정** 만들고 Pages에서 그 저장소 연결
-3. `public/admin/config.yml` 의 `repo:` 를 `내계정이름/teamleader-manual` 로 수정
-
-배포하면 이렇게 달라집니다.
-
-- `https://...` 주소로 **24시간 접속 가능** (내 PC를 꺼도 됨)
-- **폰에서도** 글 등록 가능
-- 단톡방에 링크 공유 시 **미리보기 카드**가 뜸
-- 저장할 때마다 1~2분 내 **자동 배포**
+배포는 완료되어 사이트가 살아 있습니다. 다만 위 샘플 문서를 정리한 뒤에
+단톡방에 링크를 공유하시는 편이 좋습니다.
 
 ---
 

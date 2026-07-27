@@ -51,16 +51,30 @@
 
 ### 방법 B — GitHub 연결해서 쓰기 (폰에서도 가능)
 
-배포를 마친 뒤에 쓸 수 있는 방법입니다. **저장하면 자동으로 커밋·배포**됩니다.
+<https://teamleader-manual.pages.dev/admin/> 로 접속합니다.
+**저장하면 자동으로 커밋되고 1~2분 뒤 사이트에 반영**됩니다.
 
-준비:
+> ⚠️ **`Sign In with GitHub` 버튼은 누르지 마세요.**
+> 그 버튼은 Netlify에 배포한 경우에만 동작합니다. 이 사이트는 Cloudflare에
+> 있어서 `api.netlify.com ... Not Found` 오류가 납니다.
+> 아래쪽 **`Sign In Using Access Token`** 을 쓰세요.
 
-1. `public/admin/config.yml` 의 `repo:` 를 `내계정이름/teamleader-manual` 로 수정
-2. GitHub → Settings → Developer settings → Personal access tokens 에서 토큰 발급
-   (권한은 해당 저장소의 **Contents: Read and write**)
-3. `사이트주소/admin/` 접속 → **`Sign In Using Access Token`** → 토큰 붙여넣기
+**토큰 발급 방법** (처음 한 번만)
 
-토큰은 브라우저에 저장되므로 한 번만 넣으면 됩니다.
+1. <https://github.com/settings/personal-access-tokens/new> 접속
+2. **Repository access** → `Only select repositories` → `teamleader-manual` 선택
+3. **Permissions** → **Repository permissions** → **Contents** 를 `Read and write` 로 변경
+4. `Generate token` → 화면에 뜬 토큰 복사 (**이 화면을 벗어나면 다시 볼 수 없습니다**)
+5. `/admin/` → `Sign In Using Access Token` → 붙여넣기
+
+토큰은 브라우저에 저장되므로 한 번만 넣으면 됩니다. 폰에서도 같은 방법으로 하면 됩니다.
+잘 안 되면 <https://github.com/settings/tokens/new> 에서 `repo` 권한 classic token 으로 시도하세요.
+
+> 🔒 토큰은 비밀번호와 같습니다. 다른 사람에게 알려주지 마세요.
+> 만료되거나 유출되면 GitHub 설정에서 삭제하고 새로 발급하면 됩니다.
+
+**참고**: `Sign In with GitHub` 버튼도 쓸 수 있게 만들려면 Cloudflare Workers에
+인증 중계 서버를 따로 배포해야 합니다. 토큰 방식으로 불편하지 않다면 굳이 필요 없습니다.
 
 ### 화면에서 하는 일
 

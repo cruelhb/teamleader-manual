@@ -61,7 +61,35 @@ const categoryInfo = CATEGORIES[category];
     scroller.appendChild(table);
   });
 
-  // 2) 스크린샷을 탭하면 전체 화면으로 확대한다.
+  // 2) 접었다 펴는 목록이 여러 개면 "모두 펼치기" 버튼을 붙인다.
+  //    규정 전체를 한 번에 훑거나 Ctrl+F 로 찾을 때 필요하다.
+  const sections = [...document.querySelectorAll<HTMLDetailsElement>('[data-prose] details')];
+
+  if (sections.length > 1) {
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'details-toggle';
+    toggle.textContent = '모두 펼치기';
+
+    toggle.addEventListener('click', () => {
+      const shouldOpen = sections.some((section) => !section.open);
+      sections.forEach((section) => {
+        section.open = shouldOpen;
+      });
+      toggle.textContent = shouldOpen ? '모두 접기' : '모두 펼치기';
+    });
+
+    // 사용자가 개별로 여닫으면 버튼 문구도 따라간다.
+    sections.forEach((section) => {
+      section.addEventListener('toggle', () => {
+        toggle.textContent = sections.every((item) => item.open) ? '모두 접기' : '모두 펼치기';
+      });
+    });
+
+    sections[0].parentElement?.insertBefore(toggle, sections[0]);
+  }
+
+  // 3) 스크린샷을 탭하면 전체 화면으로 확대한다.
   //    폰에서 캡처 속 작은 글씨를 읽으려면 이게 없으면 답이 없다.
   const lightbox = document.createElement('div');
   lightbox.className = 'lightbox';

@@ -675,6 +675,110 @@ main {
   border-bottom: 0;
 }
 
+/* ==========================================================================
+   접었다 펴는 목록 (<details>) — 대분류를 눌러 하위 내용을 여는 방식
+   ========================================================================== */
+
+.prose details {
+  margin: 0 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.prose details[open] {
+  padding-bottom: 8px;
+  border-color: var(--brand);
+}
+
+.prose summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding: 14px 18px;
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius);
+}
+
+/* 기본 삼각형 마커 숨기기 */
+.prose summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose summary:hover {
+  background: var(--surface-alt);
+}
+
+/* 오른쪽 꺾쇠 — 열리면 위를 향한다 */
+.prose summary::after {
+  content: '';
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-left: auto;
+  border-right: 2px solid var(--text-faint);
+  border-bottom: 2px solid var(--text-faint);
+  transform: translateY(-3px) rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.prose details[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+.prose details[open] > summary {
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* 펼친 내용에 좌우 여백 주기.
+   .table-scroll 은 위쪽에서 margin 단축 속성으로 좌우를 0 으로 잡기 때문에
+   더 구체적인 선택자로 다시 지정해야 한다. */
+.prose details > *:not(summary),
+.prose details > .table-scroll {
+  margin-left: 18px;
+  margin-right: 18px;
+}
+
+.prose details > summary + *,
+.prose details > summary + .table-scroll {
+  margin-top: 16px;
+}
+
+/* 제목 옆 미리보기 문구 (예: "본인 5일 · 70만원") */
+.summary-hint {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* 모두 펼치기/접기 버튼 */
+.details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.details-toggle:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
 /* 스크린샷 */
 .prose img {
   display: block;

@@ -1,9 +1,3 @@
----
-import site from '../data/site.json';
-
-const reportUrl = site.reportUrl?.trim();
----
-
 <div class="search" data-search>
   <label class="sr-only" for="site-search">검색어를 입력하세요</label>
 
@@ -36,19 +30,7 @@ const reportUrl = site.reportUrl?.trim();
 
   <div class="search__noresult" hidden data-search-noresult>
     <p><strong data-search-term></strong> 에 대한 결과가 없어요.</p>
-    {
-      reportUrl ? (
-        <p>
-          찾는 내용이 아직 안 올라와 있다면{' '}
-          <a href={reportUrl} target="_blank" rel="noopener noreferrer">
-            제보해 주세요
-          </a>
-          .
-        </p>
-      ) : (
-        <p>다른 단어로 검색해 보시거나, 검색어를 지우고 아래 메뉴에서 찾아보세요.</p>
-      )
-    }
+    <p>다른 단어로 검색해 보시거나, 검색어를 지우고 아래 메뉴에서 찾아보세요.</p>
   </div>
 </div>
 

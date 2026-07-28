@@ -1,25 +1,8 @@
----
-import site from '../data/site.json';
-
-// site.json 의 reportUrl 이 비어 있으면 제보 버튼을 숨긴다.
-// (제보 창구 주소를 받으면 site.json 한 줄만 채우면 됩니다)
-const reportUrl = site.reportUrl?.trim();
----
-
 <div class="doc-actions">
   <button class="btn btn--primary" type="button" data-share-button>
     <span aria-hidden="true">🔗</span>
     <span data-share-label>링크 복사</span>
   </button>
-
-  {
-    reportUrl ? (
-      <a class="btn" href={reportUrl} target="_blank" rel="noopener noreferrer">
-        <span aria-hidden="true">🚨</span>
-        {site.reportLabel}
-      </a>
-    ) : null
-  }
 </div>
 
 <script>

@@ -52,13 +52,25 @@ const categoryInfo = CATEGORIES[category];
 </BaseLayout>
 
 <script>
-  // 1) 좁은 화면에서 표가 페이지를 밀지 않도록 가로 스크롤 컨테이너로 감싼다.
+  // 1) 표를 감싸고, 각 칸에 머리글 이름을 data-label 로 붙인다.
+  //    넓은 화면에서는 가로 스크롤 컨테이너로, 좁은 화면(560px 이하)에서는
+  //    CSS가 이 라벨을 이용해 표를 카드 형태로 바꾼다.
   document.querySelectorAll<HTMLTableElement>('[data-prose] table').forEach((table) => {
-    if (table.parentElement?.classList.contains('table-scroll')) return;
-    const scroller = document.createElement('div');
-    scroller.className = 'table-scroll';
-    table.replaceWith(scroller);
-    scroller.appendChild(table);
+    if (!table.parentElement?.classList.contains('table-scroll')) {
+      const scroller = document.createElement('div');
+      scroller.className = 'table-scroll';
+      table.replaceWith(scroller);
+      scroller.appendChild(table);
+    }
+
+    const headers = [...table.querySelectorAll('thead th')].map((th) => th.textContent?.trim() ?? '');
+    if (headers.length === 0) return;
+
+    table.querySelectorAll('tbody tr').forEach((row) => {
+      [...row.cells].forEach((cell, index) => {
+        if (headers[index]) cell.setAttribute('data-label', headers[index]);
+      });
+    });
   });
 
   // 2) 접었다 펴는 목록이 여러 개면 "모두 펼치기" 버튼을 붙인다.

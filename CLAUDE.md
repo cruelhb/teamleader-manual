@@ -88,6 +88,9 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
 5. **상단 메뉴바 없음.** 홈이 유일한 허브다. 카테고리 페이지에는 `← 홈` 링크,
    문서 페이지에는 카테고리 breadcrumb이 있다.
 6. **저장소는 공개(public).** 비공개를 권했으나 사용자가 공개를 선택했다.
+7. **사이트 안에 제보 창구를 두지 않는다.** 제보는 사이트 밖(카톡 등)에서 받아
+   사용자가 직접 수정한다. `site.json` 의 `reportUrl`·`reportLabel` 과
+   문서 하단 제보 버튼, 검색 결과 없음 화면의 제보 안내를 모두 제거했다.
 
 ## 6. 주의사항 (실제로 문제가 됐던 것들)
 
@@ -124,10 +127,13 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
 
 ### 관리자 화면
 
-- **`Sign In with GitHub` 버튼은 동작하지 않는다.** Sveltia CMS가 Netlify 인증 서버를
-  기본값으로 호출해서 `api.netlify.com ... Not Found` 가 뜬다. Cloudflare 배포이므로
-  **`Sign In Using Access Token`**(GitHub 개인 액세스 토큰)을 써야 한다.
-  버튼을 살리려면 Cloudflare Workers에 인증 중계 서버를 따로 배포해야 한다(미구현).
+- **`Sign In with GitHub` 은 OAuth 중계 서버를 거친다.** 기본값으로는 Sveltia CMS가
+  Netlify 인증 서버를 호출해 `api.netlify.com ... Not Found` 가 떴다. 그래서
+  Cloudflare Workers에 `sveltia-cms-auth` 를 배포하고 `config.yml` 의 `backend.base_url`
+  에 `https://sveltia-cms-auth.onelight0913.workers.dev` 를 넣어 해결했다.
+  워커 쪽에 `GITHUB_CLIENT_ID`·`GITHUB_CLIENT_SECRET`·`ALLOWED_DOMAINS` 환경변수가
+  들어 있고, GitHub OAuth App의 callback 은 `<워커주소>/callback` 이다.
+  **`base_url` 을 지우면 로그인이 다시 깨진다.**
 - **CMS가 빈 항목을 `null` 로 저장한다.** `src/content.config.ts` 의 스키마가
   `nullish().transform()` 으로 이를 흡수하고 있으니 건드리지 말 것.
 
@@ -151,10 +157,8 @@ npm run build          # 배포 전 확인. frontmatter 누락 시 실패해야 
 ## 8. 남은 일
 
 1. **샘플 문서 6건 정리** — 실제 내용으로 교체하거나 삭제. 팀원 공유 전 필수.
-2. **카카오 오픈채팅 링크** — `src/data/site.json` 의 `reportUrl` 에 넣으면
-   모든 문서 하단에 제보 버튼이 생긴다. 지금은 비어 있어 버튼이 숨겨진 상태.
-3. **FAQ 채우기** — 카테고리가 비어 있다. 실제 자주 묻는 질문을 받아 작성.
-4. (선택) `Sign In with GitHub` 을 살리는 OAuth 중계 서버 배포.
+2. **FAQ 채우기** — 카테고리가 비어 있다. 실제 자주 묻는 질문을 받아 작성.
+3. (선택) `Sign In with GitHub` 을 살리는 OAuth 중계 서버 배포.
 
 ## 9. 최근 작업 흐름 요약
 

@@ -838,6 +838,149 @@ main {
   color: var(--brand-strong);
 }
 
+/* --------------------------------------------------------------------------
+   절차 도식 (단계 + 담당자)
+
+   마크다운 본문에서 이렇게 쓴다. 빈 줄 없이 한 덩어리로 붙여 써야 한다.
+
+     <ol class="steps">
+     <li><span class="step__what">사번 생성</span></li>
+     <li><span class="step__what">OJT계획서 생성</span><span class="step__who">해당 팀장</span>
+     <span class="step__note">경력자는 생략 가능</span></li>
+     </ol>
+
+   번호와 연결선은 CSS 가 자동으로 그린다. 순서를 바꾸면 번호도 따라간다.
+   -------------------------------------------------------------------------- */
+
+.prose .steps {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  counter-reset: step;
+}
+
+.prose .steps > li {
+  position: relative;
+  counter-increment: step;
+  padding: 0 0 18px 42px;
+}
+
+.prose .steps > li:last-child {
+  padding-bottom: 0;
+}
+
+/* 단계 번호 */
+.prose .steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: -2px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* 다음 단계로 이어지는 선 */
+.prose .steps > li::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 32px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--border-strong);
+}
+
+.prose .steps > li:last-child::after {
+  display: none;
+}
+
+.step__what {
+  display: block;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+/* 이 단계를 처리하는 사람 */
+.step__who {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.step__note {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* 갈림길 (합격 / 불합격 처럼 결과가 둘로 나뉠 때)
+   설명이 긴 쪽과 짧은 쪽의 높이가 크게 달라지므로 나란히 두지 않고 위아래로 쌓는다. */
+.prose .branch {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.prose .branch > li {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--surface);
+}
+
+.branch__label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.prose .branch > li.is-pass {
+  border-left-color: var(--brand);
+}
+
+.prose .branch > li.is-pass .branch__label {
+  color: var(--brand-strong);
+}
+
+.prose .branch > li.is-fail {
+  border-left-color: var(--accent-warn);
+}
+
+.prose .branch > li.is-fail .branch__label {
+  color: var(--accent-warn);
+}
+
+/* 갈림길 카드 안의 부가 설명 (선행 조건, 유의사항 등) */
+.branch__note {
+  display: block;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
 /* 모두 펼치기/접기 버튼 */
 .details-toggle {
   display: inline-flex;

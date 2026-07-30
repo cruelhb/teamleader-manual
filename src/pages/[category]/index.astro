@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DocCard from '../../components/DocCard.astro';
+import Icon from '../../components/Icon.astro';
 import { CATEGORIES, CATEGORY_ORDER, type CategoryKey } from '../../lib/categories';
 import { sortDocs } from '../../lib/docs';
 
@@ -34,7 +35,10 @@ const info = CATEGORIES[category];
   {/* 상단 메뉴바가 없으므로 홈으로 돌아가는 길을 명시한다 */}
   <p class="doc__breadcrumb"><a href="/">← 홈</a></p>
 
-  <h1 class="page-title">{info.emoji} {info.label}</h1>
+  <h1 class="page-title">
+    <span class="page-title__icon"><Icon name={info.icon} size={24} /></span>
+    {info.label}
+  </h1>
   <p class="page-desc">{info.description}</p>
 
   {

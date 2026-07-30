@@ -1,5 +1,7 @@
 ---
+import Icon from './Icon.astro';
 import { formatDate } from '../lib/format';
+import type { IconName } from '../lib/icons';
 
 interface Props {
   url: string;
@@ -9,10 +11,10 @@ interface Props {
   pinned?: boolean;
   /** 카테고리 배지를 보여줄지 (카테고리 목록 안에서는 중복이라 끈다) */
   categoryLabel?: string;
-  categoryEmoji?: string;
+  categoryIcon?: IconName;
 }
 
-const { url, title, summary, updated, pinned = false, categoryLabel, categoryEmoji } = Astro.props;
+const { url, title, summary, updated, pinned = false, categoryLabel, categoryIcon } = Astro.props;
 ---
 
 <li>
@@ -20,10 +22,10 @@ const { url, title, summary, updated, pinned = false, categoryLabel, categoryEmo
     {
       (pinned || categoryLabel) && (
         <div class="card__top">
-          {pinned && <span class="badge badge--pinned">📌 중요</span>}
+          {pinned && <span class="badge badge--pinned">중요</span>}
           {categoryLabel && (
             <span class="badge">
-              <span aria-hidden="true">{categoryEmoji}</span>
+              {categoryIcon && <Icon name={categoryIcon} size={14} />}
               {categoryLabel}
             </span>
           )}

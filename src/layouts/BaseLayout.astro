@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import site from '../data/site.json';
+import Icon from '../components/Icon.astro';
 
 interface Props {
   /** 브라우저 탭 / 카카오톡 미리보기 제목. 없으면 사이트 이름만 쓴다. */
@@ -19,9 +20,14 @@ const pageTitle = title ? `${title} | ${site.name}` : `${site.name} — ${site.t
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-default.png', Astro.site);
 
-// 이모지를 그대로 파비콘으로 쓴다 (별도 이미지 파일 불필요)
+// 파비콘. 이미지 파일 없이 SVG 를 그대로 주소에 담는다.
+// 헤더 로고와 같은 "겹친 마름모"(src/lib/icons.ts 의 logo)를 브랜드색 사각형 위에 올린 것.
+// 작은 크기에서도 알아보이게 선 대신 면으로 채웠다. '#' 은 주소에서 %23 으로 써야 한다.
 const favicon =
-  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📌</text></svg>";
+  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>" +
+  "<rect width='100' height='100' rx='22' fill='%231f5fa9'/>" +
+  "<path d='M50 21 79 50 50 79 21 50Z' fill='none' stroke='white' stroke-width='7'/>" +
+  "<path d='M50 39 61 50 50 61 39 50Z' fill='white'/></svg>";
 ---
 
 <!doctype html>
@@ -48,13 +54,20 @@ const favicon =
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="theme-color" content="#1f5fa9" />
+
+    {/* 페이지별로 <head> 에 더 넣을 것이 있으면 slot="head" 로 넘긴다
+        (문서 페이지가 본문 아이콘 CSS 를 이렇게 넣는다) */}
+    <slot name="head" />
   </head>
 
   <body>
     <header class="site-header">
       <div class="wrap site-header__bar">
         {/* 헤더는 좁은 폰 화면을 고려해 짧은 이름을 쓴다 (전체 이름은 제목·미리보기에 사용) */}
-        <a class="site-header__logo" href="/">📌 {site.shortName}</a>
+        <a class="site-header__logo" href="/">
+          <Icon name="logo" size={19} />
+          {site.shortName}
+        </a>
       </div>
     </header>
 

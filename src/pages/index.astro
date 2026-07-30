@@ -3,9 +3,11 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchBox from '../components/SearchBox.astro';
 import DocCard from '../components/DocCard.astro';
+import Icon from '../components/Icon.astro';
 import site from '../data/site.json';
 import shortcuts from '../data/shortcuts.json';
 import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
+import type { IconName } from '../lib/icons';
 import { sortDocs } from '../lib/docs';
 
 const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort).slice(0, 3);
@@ -26,8 +28,8 @@ const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort).
         {
           CATEGORY_ORDER.map((key) => (
             <a class="menu-item" href={`/${key}/`}>
-              <span class="menu-item__emoji" aria-hidden="true">
-                {CATEGORIES[key].emoji}
+              <span class="menu-item__icon">
+                <Icon name={CATEGORIES[key].icon} size={22} />
               </span>
               <span class="menu-item__body">
                 <strong class="menu-item__label">{CATEGORIES[key].label}</strong>
@@ -46,8 +48,8 @@ const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort).
           shortcuts.map((shortcut) => (
             <li>
               <a class="shortcut" href={shortcut.url}>
-                <span class="shortcut__emoji" aria-hidden="true">
-                  {shortcut.emoji}
+                <span class="shortcut__icon">
+                  <Icon name={shortcut.icon as IconName} size={22} />
                 </span>
                 {shortcut.label}
               </a>

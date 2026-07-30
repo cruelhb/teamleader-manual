@@ -49,7 +49,7 @@ export const GET: APIRoute = async () => {
         tags: entry.data.tags,
         category,
         categoryLabel: CATEGORIES[category].label,
-        categoryEmoji: CATEGORIES[category].emoji,
+        categoryIcon: CATEGORIES[category].icon,
         updated: toIsoDate(entry.data.updated),
         body: toPlainText(entry.body ?? '').slice(0, BODY_LIMIT),
       });

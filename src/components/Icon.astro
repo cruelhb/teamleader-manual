@@ -1,0 +1,21 @@
+---
+// 선으로 그린 아이콘 하나를 그린다.
+//
+// 쓰는 법: <Icon name="notice" /> 또는 <Icon name="search" size={20} />
+// 아이콘 목록과 모양은 src/lib/icons.ts 에 있다.
+//
+// 색은 지정하지 않는다. 글자색(currentColor)을 그대로 따라가므로
+// 감싸는 쪽에서 color 만 정해주면 되고, 다크 모드도 자동으로 맞는다.
+import { iconSvg, type IconName } from '../lib/icons';
+
+interface Props {
+  name: IconName;
+  /** 한 변의 길이(px). 기본 22 */
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 22, class: className = 'icon' } = Astro.props;
+---
+
+<Fragment set:html={iconSvg(name, size, className)} />

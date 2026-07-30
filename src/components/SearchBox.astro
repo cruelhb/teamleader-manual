@@ -1,8 +1,12 @@
+---
+import Icon from './Icon.astro';
+---
+
 <div class="search" data-search>
   <label class="sr-only" for="site-search">검색어를 입력하세요</label>
 
   <div class="search__field">
-    <span class="search__icon" aria-hidden="true">🔍</span>
+    <span class="search__icon"><Icon name="search" size={20} /></span>
     <input
       class="search__input"
       id="site-search"
@@ -37,6 +41,7 @@
 <script>
   import { searchDocs, type SearchDoc } from '../lib/search';
   import { formatDate } from '../lib/format';
+  import { iconSvg } from '../lib/icons';
 
   const root = document.querySelector<HTMLElement>('[data-search]');
   if (root) {
@@ -104,7 +109,7 @@
               <a class="card" href="${escapeHtml(doc.url)}">
                 <div class="card__top">
                   <span class="badge">
-                    <span aria-hidden="true">${escapeHtml(doc.categoryEmoji)}</span>
+                    ${iconSvg(doc.categoryIcon, 14)}
                     ${escapeHtml(doc.categoryLabel)}
                   </span>
                 </div>

@@ -70,6 +70,7 @@ src/content/<카테고리>/*.md   글 (여기가 대부분의 작업)
 src/data/site.json             사이트 이름, 제보 링크
 src/data/shortcuts.json        홈 "자주 찾는 항목" 타일
 src/lib/categories.ts          메뉴 이름·설명·정렬 방식
+src/lib/icons.ts               선 아이콘 모음 (SVG 도형)
 public/admin/config.yml        관리자 화면 입력칸
 scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트명 바꾸면 재실행)
 ```
@@ -91,11 +92,22 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
 7. **사이트 안에 제보 창구를 두지 않는다.** 제보는 사이트 밖(카톡 등)에서 받아
    사용자가 직접 수정한다. `site.json` 의 `reportUrl`·`reportLabel` 과
    문서 하단 제보 버튼, 검색 결과 없음 화면의 제보 안내를 모두 제거했다.
+8. **이모지를 쓰지 않는다 — UI 도 문서 본문도.** 사용자가 "촌스럽다"고 해서
+   메뉴·타일·버튼·헤더 로고·파비콘, 그리고 경조사 문서 본문의 이모지까지 전부
+   `src/lib/icons.ts` 의 선 아이콘(SVG)으로 바꿨다. 아이콘은 `fill` 없이 `stroke` 만
+   쓰고 색은 `currentColor` 를 따라간다. 새 아이콘이 필요하면 이모지를 넣지 말고
+   `icons.ts` 에 도형을 추가할 것.
 
 ## 6. 주의사항 (실제로 문제가 됐던 것들)
 
 ### 콘텐츠
 
+- **아이콘은 두 가지 방식으로 쓴다.** `.astro` 안에서는 `<Icon name="notice" />`
+  (`src/components/Icon.astro`, 인라인 SVG). **마크다운 본문에서는**
+  `<i class="ico ico--alert"></i>` — 본문에 SVG 를 그대로 넣으면 글을 못 읽게 되므로
+  CSS `mask` 로 그린다. 모양 정의는 `DocLayout.astro` 가 `bodyIconCss()` 결과를
+  `<style slot="head">` 로 심는다. 검색 인덱스는 인라인 HTML 을 걷어내므로
+  `<i>` 태그가 검색에 섞이지 않는다.
 - **`<details>` 안의 마크다운은 빈 줄이 필수다.** `<summary>` 다음 줄과 `</details>`
   앞에 빈 줄이 없으면 표가 표로 렌더링되지 않고 글자 그대로 나온다.
 - **CMS 본문 편집은 `raw` 모드가 기본**이며 그대로 둬야 한다. `rich_text`(위지윅)로

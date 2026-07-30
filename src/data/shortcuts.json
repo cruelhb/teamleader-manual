@@ -1,8 +1,8 @@
 [
-  { "label": "경조사 안내", "url": "/welfare/경조사-안내/", "emoji": "🎋" },
-  { "label": "연차 사용 기준", "url": "/welfare/연차-사용-기준/", "emoji": "🌴" },
-  { "label": "교육비 지원", "url": "/welfare/교육비-지원/", "emoji": "📚" },
-  { "label": "건강검진 안내", "url": "/welfare/건강검진-안내/", "emoji": "🩺" },
-  { "label": "휴가원 양식", "url": "/form/휴가원/", "emoji": "📄" },
-  { "label": "전산 비밀번호 변경", "url": "/guide/전산-비밀번호-변경/", "emoji": "🔑" }
+  { "label": "경조사 안내", "url": "/welfare/경조사-안내/", "icon": "envelope" },
+  { "label": "연차 사용 기준", "url": "/welfare/연차-사용-기준/", "icon": "calendar" },
+  { "label": "교육비 지원", "url": "/welfare/교육비-지원/", "icon": "book" },
+  { "label": "건강검진 안내", "url": "/welfare/건강검진-안내/", "icon": "medical" },
+  { "label": "휴가원 양식", "url": "/form/휴가원/", "icon": "form" },
+  { "label": "전산 비밀번호 변경", "url": "/guide/전산-비밀번호-변경/", "icon": "key" }
 ]

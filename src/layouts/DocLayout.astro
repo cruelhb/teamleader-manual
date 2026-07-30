@@ -1,8 +1,10 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import ShareButton from '../components/ShareButton.astro';
+import Icon from '../components/Icon.astro';
 import { CATEGORIES, type CategoryKey } from '../lib/categories';
 import { formatDate } from '../lib/format';
+import { bodyIconCss } from '../lib/icons';
 
 interface Props {
   category: CategoryKey;
@@ -15,13 +17,19 @@ interface Props {
 
 const { category, title, summary, updated, source, file } = Astro.props;
 const categoryInfo = CATEGORIES[category];
+
+// 본문에서 <i class="ico ico--이름"></i> 로 쓰는 아이콘의 모양 정의.
+// 문서 페이지에서만 필요하므로 여기서만 심는다.
+const iconCss = bodyIconCss();
 ---
 
 <BaseLayout title={title} description={summary} ogType="article">
+  <style slot="head" is:inline set:html={iconCss}></style>
+
   <article class="doc">
     <p class="doc__breadcrumb">
-      <a href={`/${category}/`}>
-        {categoryInfo.emoji}
+      <a class="doc__breadcrumb-link" href={`/${category}/`}>
+        <Icon name={categoryInfo.icon} size={16} />
         {categoryInfo.label}
       </a>
     </p>
@@ -37,7 +45,7 @@ const categoryInfo = CATEGORIES[category];
       file && (
         <p>
           <a class="btn btn--primary" href={file} download>
-            <span aria-hidden="true">⬇️</span> 서식 내려받기
+            <Icon name="download" size={18} /> 서식 내려받기
           </a>
         </p>
       )

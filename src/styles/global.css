@@ -150,10 +150,17 @@ input {
 }
 
 .site-header__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--text);
   letter-spacing: -0.01em;
+}
+
+.site-header__logo .icon {
+  color: var(--brand);
 }
 
 .site-header__logo:hover {
@@ -175,10 +182,25 @@ main {
    공통 요소
    ========================================================================== */
 
+/* 아이콘 (src/lib/icons.ts 의 선 아이콘)
+   색은 감싸는 쪽에서 color 로 정한다. 여기서는 크기·정렬만 잡는다. */
+.icon {
+  flex: none;
+  display: block;
+}
+
 .page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 6px;
   font-size: 1.6rem;
   letter-spacing: -0.02em;
+}
+
+.page-title__icon {
+  display: flex;
+  color: var(--brand);
 }
 
 .page-desc {
@@ -190,7 +212,7 @@ main {
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 3px 10px;
   border-radius: 999px;
   background: var(--brand-soft);
@@ -336,10 +358,16 @@ main {
   text-decoration: none;
 }
 
-.menu-item__emoji {
+/* 아이콘을 옅은 브랜드색 사각 칩 안에 넣는다. 이모지보다 줄이 정돈돼 보인다. */
+.menu-item__icon {
   flex: none;
-  font-size: 1.6rem;
-  line-height: 1;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--brand-soft);
+  color: var(--brand-strong);
 }
 
 .menu-item__body {
@@ -412,9 +440,9 @@ main {
   text-decoration: none;
 }
 
-.shortcut__emoji {
-  font-size: 1.5rem;
-  line-height: 1;
+.shortcut__icon {
+  display: flex;
+  color: var(--brand);
 }
 
 /* ==========================================================================
@@ -443,7 +471,7 @@ main {
 
 .search__icon {
   flex: none;
-  font-size: 1.1rem;
+  display: flex;
   color: var(--text-faint);
 }
 
@@ -552,6 +580,12 @@ main {
   margin-bottom: 12px;
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.doc__breadcrumb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .doc__title {
@@ -771,6 +805,37 @@ main {
   font-size: 0.82rem;
   font-weight: 500;
   color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   본문(마크다운) 안에서 쓰는 작은 아이콘
+
+   글 안에 SVG 를 그대로 넣으면 문장이 읽을 수 없게 길어지므로
+   <i class="ico ico--rings"></i> 처럼 짧게 쓴다.
+   실제 모양(--ico)은 문서 페이지가 심어주는 CSS 에서 온다 (src/lib/icons.ts).
+   mask 방식이라 색이 글자색을 따라가고 다크 모드에서도 알아서 맞는다.
+   -------------------------------------------------------------------------- */
+
+.ico {
+  display: inline-block;
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: -0.17em;
+  background-color: currentColor;
+  -webkit-mask: var(--ico) center / contain no-repeat;
+  mask: var(--ico) center / contain no-repeat;
+}
+
+/* 펼침 목록 제목의 아이콘은 조금 크게, 브랜드색으로 */
+.prose summary .ico {
+  width: 1.3em;
+  height: 1.3em;
+  color: var(--brand);
+}
+
+.prose blockquote .ico {
+  color: var(--brand-strong);
 }
 
 /* 모두 펼치기/접기 버튼 */

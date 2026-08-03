@@ -8,7 +8,7 @@
 
 import type { IconName } from './icons';
 
-export type CategoryKey = 'notice' | 'guide' | 'welfare' | 'faq' | 'form';
+export type CategoryKey = 'notice' | 'guide' | 'welfare';
 
 export interface CategoryInfo {
   label: string;
@@ -33,27 +33,15 @@ export const CATEGORIES: Record<CategoryKey, CategoryInfo> = {
     sort: 'order',
   },
   welfare: {
-    label: '복지·인사',
+    label: '복지·인사 규정',
     icon: 'welfare',
     description: '연차, 경조사, 교육비 등 전 인원에게 공통 적용되는 규정입니다.',
-    sort: 'order',
-  },
-  faq: {
-    label: 'FAQ',
-    icon: 'faq',
-    description: '단톡방에서 자주 나오는 질문과 답을 모았습니다.',
-    sort: 'order',
-  },
-  form: {
-    label: '서식·양식',
-    icon: 'form',
-    description: '휴가원 등 자주 쓰는 서식을 내려받을 수 있습니다.',
     sort: 'order',
   },
 };
 
 /** 네비게이션에 표시할 순서 */
-export const CATEGORY_ORDER: CategoryKey[] = ['notice', 'guide', 'welfare', 'faq', 'form'];
+export const CATEGORY_ORDER: CategoryKey[] = ['notice', 'guide', 'welfare'];
 
 export const isCategoryKey = (value: string): value is CategoryKey =>
   Object.prototype.hasOwnProperty.call(CATEGORIES, value);

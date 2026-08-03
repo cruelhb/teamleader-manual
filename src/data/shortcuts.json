@@ -1,8 +1,5 @@
 [
   { "label": "경조사 안내", "url": "/welfare/경조사-안내/", "icon": "envelope" },
-  { "label": "연차 사용 기준", "url": "/welfare/연차-사용-기준/", "icon": "calendar" },
-  { "label": "교육비 지원", "url": "/welfare/교육비-지원/", "icon": "book" },
-  { "label": "건강검진 안내", "url": "/welfare/건강검진-안내/", "icon": "medical" },
-  { "label": "휴가원 양식", "url": "/form/휴가원/", "icon": "form" },
-  { "label": "전산 비밀번호 변경", "url": "/guide/전산-비밀번호-변경/", "icon": "key" }
+  { "label": "OJT 프로세스", "url": "/guide/ojt-프로세스-및-진행방법/", "icon": "guide" },
+  { "label": "팀별 잔여 회식비", "url": "/guide/팀별-잔여-회식비-조회/", "icon": "won" }
 ]

@@ -73,6 +73,4 @@ export const collections = {
   notice: docCollection('notice'),
   guide: docCollection('guide'),
   welfare: docCollection('welfare'),
-  faq: docCollection('faq'),
-  form: docCollection('form'),
 };

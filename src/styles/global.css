@@ -701,11 +701,15 @@ main {
   border-radius: var(--radius);
 }
 
+/* 표는 절대 좌우로 스크롤되지 않아야 한다.
+   예전에는 white-space: nowrap 이라 글이 조금만 길어도 데스크톱에서까지 표가
+   화면 밖으로 밀려났다. 지금은 칸 안에서 줄바꿈되어 항상 화면 폭에 맞는다.
+   .table-scroll 은 그래도 넘치는 경우(칸이 아주 많은 표)를 위한 안전장치로 남겨둔다. */
 .prose table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  white-space: nowrap;
+  table-layout: auto;
 }
 
 .prose th,
@@ -713,6 +717,9 @@ main {
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
   text-align: left;
+  /* 한글은 단어 중간에서 끊으면 읽기 나쁘므로 어절 단위로 넘긴다 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .prose th {
@@ -928,9 +935,25 @@ main {
   line-height: 1.5;
 }
 
-/* 갈림길 (합격 / 불합격 처럼 결과가 둘로 나뉠 때)
-   설명이 긴 쪽과 짧은 쪽의 높이가 크게 달라지므로 나란히 두지 않고 위아래로 쌓는다. */
-.prose .branch {
+/* --------------------------------------------------------------------------
+   비교 카드 (.compare)
+
+   두 가지를 나란히 놓고 보여줄 때 쓴다.
+     - 결과가 둘로 나뉠 때  (합격 / 불합격)
+     - 두 개념을 비교할 때  (무급휴가 / 결근)
+
+   표 대신 이걸 쓰는 이유: 항목 설명이 한 문장씩 길어지면 표는 칸이 좁아져
+   좌우로 스크롤해야 보이게 된다. 카드는 위아래로 쌓이므로 폰에서도 그대로 읽힌다.
+
+     <ul class="compare">
+     <li class="is-good"><span class="compare__label">무급휴가</span>회사의 사전 승인을 받은 휴가
+     <span class="compare__note">인사고과에 불이익이 없습니다.</span></li>
+     <li class="is-caution"><span class="compare__label">결근</span>임의로 출근하지 않은 상태</li>
+     </ul>
+
+   is-good = 파란 테두리, is-caution = 주황 테두리. 안 붙이면 회색.
+   -------------------------------------------------------------------------- */
+.prose .compare {
   display: grid;
   gap: 10px;
   list-style: none;
@@ -938,7 +961,7 @@ main {
   padding: 0;
 }
 
-.prose .branch > li {
+.prose .compare > li {
   padding: 14px 16px;
   border: 1px solid var(--border);
   border-left: 3px solid var(--border-strong);
@@ -946,7 +969,7 @@ main {
   background: var(--surface);
 }
 
-.branch__label {
+.compare__label {
   display: block;
   margin-bottom: 3px;
   font-size: 0.78rem;
@@ -954,24 +977,24 @@ main {
   letter-spacing: 0.02em;
 }
 
-.prose .branch > li.is-pass {
+.prose .compare > li.is-good {
   border-left-color: var(--brand);
 }
 
-.prose .branch > li.is-pass .branch__label {
+.prose .compare > li.is-good .compare__label {
   color: var(--brand-strong);
 }
 
-.prose .branch > li.is-fail {
+.prose .compare > li.is-caution {
   border-left-color: var(--accent-warn);
 }
 
-.prose .branch > li.is-fail .branch__label {
+.prose .compare > li.is-caution .compare__label {
   color: var(--accent-warn);
 }
 
-/* 갈림길 카드 안의 부가 설명 (선행 조건, 유의사항 등) */
-.branch__note {
+/* 카드 안의 부가 설명 (선행 조건, 유의사항 등) */
+.compare__note {
   display: block;
   margin-top: 10px;
   padding-top: 10px;
@@ -1006,9 +1029,13 @@ main {
    좁은 화면에서는 표를 카드로 바꾼다.
    가로 스크롤 없이 한눈에 보이게 하기 위함이며, 각 행이 하나의 카드가 되고
    머리글은 각 칸 왼쪽에 라벨로 붙는다. (라벨은 DocLayout 스크립트가 data-label 로 넣음)
+
+   기준 폭이 700px 인 이유: 560px 였을 때 경조사 문서의 5칸짜리 표가
+   561~700px 구간(태블릿, 폰 가로 보기)에서 좌우 스크롤이 생겼다.
+   칸이 많은 표까지 확실히 담기는 폭으로 올렸다. 이 값을 낮추지 말 것.
    -------------------------------------------------------------------------- */
 
-@media (max-width: 560px) {
+@media (max-width: 700px) {
   .prose .table-scroll {
     overflow-x: visible;
     border: 0;

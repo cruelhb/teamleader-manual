@@ -32,8 +32,8 @@ order: 20
 
 ### 평가 결과에 따라
 
-<ul class="branch">
-<li class="is-pass"><span class="branch__label">합격 · 합산 80점 이상</span>최종 OJT 승인</li>
-<li class="is-fail"><span class="branch__label">불합격 · 합산 80점 미만</span>OJT 계약만료로 퇴사 진행
-<span class="branch__note">OJT 불합격에 의한 계약만료를 진행할 때에는 <strong>반드시 OJT 만료일이 도래하기 전에</strong> 대상자에게 업무 또는 근태 등 개선 지시를 했다는 <strong>근거자료</strong>가 있어야 하며, <strong>OJT 불합격 평가도 만료일이 도래하기 전에 완료</strong>해야 합니다.</span></li>
+<ul class="compare">
+<li class="is-good"><span class="compare__label">합격 · 합산 80점 이상</span>최종 OJT 승인</li>
+<li class="is-caution"><span class="compare__label">불합격 · 합산 80점 미만</span>OJT 계약만료로 퇴사 진행
+<span class="compare__note">OJT 불합격에 의한 계약만료를 진행할 때에는 <strong>반드시 OJT 만료일이 도래하기 전에</strong> 대상자에게 업무 또는 근태 등 개선 지시를 했다는 <strong>근거자료</strong>가 있어야 하며, <strong>OJT 불합격 평가도 만료일이 도래하기 전에 완료</strong>해야 합니다.</span></li>
 </ul>

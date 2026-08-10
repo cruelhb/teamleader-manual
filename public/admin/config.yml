@@ -121,10 +121,10 @@ collections:
         modes: [raw, rich_text]
         hint: 캡처는 본문 안에서 드래그해서 올리면 됩니다.
 
-  # ────────────────────────────── 복지·인사
+  # ────────────────────────────── 기준 및 규정
   - name: welfare
-    label: 복지·인사
-    label_singular: 복지·인사 문서
+    label: 기준 및 규정
+    label_singular: 기준·규정 문서
     description: 연차, 경조사, 교육비 등 전 인원 공통 규정입니다.
     folder: src/content/welfare
     create: true

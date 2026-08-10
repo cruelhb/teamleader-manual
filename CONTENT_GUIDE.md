@@ -28,7 +28,7 @@
 | --- | --- | --- |
 | 공지사항 | `src/content/notice/` | 전 인원 공지 |
 | 업무 매뉴얼 | `src/content/guide/` | 전산·시스템 사용법 (스크린샷 위주) |
-| 복지·인사 규정 | `src/content/welfare/` | 연차, 경조사, 교육비 등 규정 |
+| 기준 및 규정 (복지, 인사 등) | `src/content/welfare/` | 연차, 경조사, 교육비 등 규정 |
 
 ---
 

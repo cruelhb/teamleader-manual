@@ -633,6 +633,20 @@ main {
   font-size: 1.05rem;
 }
 
+.prose h4 {
+  margin: 20px 0 8px;
+  font-size: 1rem;
+}
+
+/* h5·h6 은 브라우저 기본값이 본문보다 작아서(0.83em) 제목으로 안 보인다.
+   본문과 같은 크기로 맞추고 색으로 단계를 구분한다. */
+.prose h5,
+.prose h6 {
+  margin: 18px 0 8px;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
 .prose p {
   margin: 0 0 16px;
 }

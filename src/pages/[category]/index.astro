@@ -33,7 +33,12 @@ const info = CATEGORIES[category];
 
 <BaseLayout title={info.label} description={info.description}>
   {/* 상단 메뉴바가 없으므로 홈으로 돌아가는 길을 명시한다 */}
-  <p class="doc__breadcrumb"><a href="/">← 홈</a></p>
+  <p class="doc__breadcrumb">
+    <a class="back-link" href="/">
+      <Icon name="arrowLeft" size={17} />
+      홈으로
+    </a>
+  </p>
 
   <h1 class="page-title">
     <span class="page-title__icon"><Icon name={info.icon} size={24} /></span>

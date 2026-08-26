@@ -28,7 +28,8 @@ const iconCss = bodyIconCss();
 
   <article class="doc">
     <p class="doc__breadcrumb">
-      <a class="doc__breadcrumb-link" href={`/${category}/`}>
+      <a class="back-link" href={`/${category}/`}>
+        <Icon name="arrowLeft" size={17} />
         <Icon name={categoryInfo.icon} size={16} />
         {categoryInfo.label}
       </a>

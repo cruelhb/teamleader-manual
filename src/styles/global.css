@@ -577,15 +577,34 @@ main {
 }
 
 .doc__breadcrumb {
-  margin-bottom: 12px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  margin-bottom: 16px;
 }
 
-.doc__breadcrumb-link {
+/* --------------------------------------------------------------------------
+   뒤로 가기 버튼 (.back-link)
+
+   상단 메뉴바가 없어서 이게 유일한 되돌아가는 길이다. 글자 링크로 두면
+   폰에서 눈에 띄지 않아 알약 모양 버튼으로 만들었다. 높이 40px 은 손가락으로
+   누르기에 필요한 최소 크기라 줄이지 말 것.
+   -------------------------------------------------------------------------- */
+.back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 40px;
+  padding: 0 14px 0 11px;
+  border: 1px solid var(--brand);
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  background: var(--brand);
+  color: var(--surface);
 }
 
 .doc__title {

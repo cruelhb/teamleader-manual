@@ -148,6 +148,10 @@ export const ICON_PATHS: Record<IconName, string> = {
   info: `<circle cx="12" cy="12" r="8.4" />
     <path d="M12 8.2v4.4" />
     <path d="M12 15.9h.01" />`,
+
+  // 뒤로 가기 — 왼쪽 화살표
+  arrowLeft: `<path d="M19 12H5.6" />
+    <path d="M11.2 5.4 4.6 12l6.6 6.6" />`,
 };
 
 export const isIconName = (value: string): value is IconName =>

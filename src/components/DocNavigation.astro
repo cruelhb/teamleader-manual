@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
+import { sortDocs } from '../lib/docs';
+import Icon from './Icon.astro';
+import NoticeStatus from './NoticeStatus.astro';
+
+const currentPath = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
+const groups = await Promise.all(CATEGORY_ORDER.map(async (key) => ({
+  key,
+  ...CATEGORIES[key],
+  docs: sortDocs(await getCollection(key), CATEGORIES[key].sort),
+})));
+const isCurrent = (url: string) => currentPath === url.replace(/\/$/, '') || (url === '/' && currentPath === '/');
+---
+
+<details class="doc-navigation" open data-doc-navigation>
+  <summary class="doc-navigation__toggle">
+    <Icon name="guide" size={19} />
+    <span>문서 메뉴</span>
+    <span class="doc-navigation__chevron" aria-hidden="true"></span>
+  </summary>
+  <nav class="doc-navigation__body" aria-label="문서 탐색">
+    <a class="nav-home" href="/" aria-current={isCurrent('/') ? 'page' : undefined}>
+      <Icon name="logo" size={17} /> 홈
+    </a>
+    {groups.map((group) => (
+      <section class="nav-group">
+        <h2>
+          <a href={`/${group.key}/`} aria-current={isCurrent(`/${group.key}/`) ? 'page' : undefined}>
+            <Icon name={group.icon} size={17} />
+            <span>{group.key === 'welfare' ? '기준 및 규정' : group.label}</span>
+            <span class="nav-group__count">{group.docs.length}</span>
+          </a>
+        </h2>
+        <ul>
+          {group.docs.map((doc) => (
+            <li><a href={`/${group.key}/${doc.id}/`} aria-current={isCurrent(`/${group.key}/${doc.id}/`) ? 'page' : undefined}>
+              {doc.data.title}
+              {group.key === 'notice' && <NoticeStatus noticeStatus={doc.data.noticeStatus} endsOn={doc.data.endsOn} />}
+            </a></li>
+          ))}
+        </ul>
+      </section>
+    ))}
+    <p class="doc-navigation__note">서면심사본부 공통 안내</p>
+  </nav>
+</details>
+
+<script>
+  const navigation = document.querySelector<HTMLDetailsElement>('[data-doc-navigation]');
+  if (navigation) {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const syncNavigation = () => { navigation.open = desktop.matches; };
+    syncNavigation();
+    desktop.addEventListener('change', syncNavigation);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !desktop.matches && navigation.open) {
+        navigation.open = false;
+        navigation.querySelector('summary')?.focus();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (!desktop.matches && event.target instanceof Node && !navigation.contains(event.target)) navigation.open = false;
+    });
+  }
+</script>

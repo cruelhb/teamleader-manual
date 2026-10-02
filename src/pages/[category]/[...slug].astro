@@ -21,6 +21,14 @@ export async function getStaticPaths() {
 
 const { entry, category } = Astro.props;
 const { Content } = await render(entry);
+const allDocs = (await Promise.all(CATEGORY_ORDER.map(async (key) =>
+  (await getCollection(key)).map((doc) => ({ url: `/${key}/${doc.id}/`, title: doc.data.title, summary: doc.data.summary }))
+))).flat();
+const relatedDocs = [...new Set(entry.data.relatedDocs as string[])].map((url) => {
+  const doc = allDocs.find((item) => item.url === decodeURI(url));
+  if (!doc) throw new Error(`관련 문서를 찾을 수 없습니다: ${entry.id} → ${url}`);
+  return doc;
+}).filter((doc) => doc.url !== `/${category}/${entry.id}/`);
 ---
 
 <DocLayout
@@ -30,6 +38,10 @@ const { Content } = await render(entry);
   updated={entry.data.updated}
   source={entry.data.source}
   file={entry.data.file}
+  quickSummary={entry.data.quickSummary}
+  relatedDocs={relatedDocs}
+  noticeStatus={entry.data.noticeStatus}
+  endsOn={entry.data.endsOn}
 >
   <Content />
 </DocLayout>

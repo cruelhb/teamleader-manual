@@ -67,12 +67,45 @@ collections:
         picker_utc: false
         format: YYYY-MM-DD
         hint: 내용을 고칠 때마다 오늘 날짜로 바꿔주세요. 문서 상단에 표시됩니다.
+      - name: noticeStatus
+        label: 공지 상태
+        widget: select
+        default: active
+        options:
+          - { label: 일반 (종료일에 따라 자동 종료), value: active }
+          - { label: 종료, value: closed }
+          - { label: 보관, value: archived }
+      - name: endsOn
+        label: 종료일
+        widget: datetime
+        required: false
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+        picker_utc: false
+        hint: 한국 시간으로 이날까지 유효합니다. 다음 날부터 종료 표시되며 홈 최신 공지에서 제외됩니다. 상시 공지는 비워 두세요.
       - name: pinned
         label: 상단 고정
         widget: boolean
         default: false
         required: false
         hint: 켜면 목록 맨 위에 "중요" 표시로 고정됩니다.
+      - name: quickSummary
+        label: 핵심 요약
+        widget: object
+        required: false
+        collapsed: true
+        hint: 본문을 수정할 때 요약도 함께 확인해 주세요. 비운 항목은 표시하지 않습니다.
+        fields:
+          - { name: audience, label: 대상, widget: text, required: false }
+          - { name: keyPoint, label: 핵심 기준, widget: text, required: false }
+          - { name: action, label: 처리 방법, widget: text, required: false }
+      - name: relatedDocs
+        label: 함께 보면 좋은 문서
+        widget: list
+        required: false
+        hint: 최대 3개. 연결할 문서의 주소에서 도메인을 뺀 경로를 입력하세요. 예) /guide/ojt-프로세스-및-진행방법/
+        field: { name: path, label: 문서 경로, widget: string }
       - name: body
         label: 본문
         widget: markdown
@@ -115,6 +148,22 @@ collections:
         required: false
         value_type: int
         hint: 숫자가 작을수록 목록 위에 옵니다. 비워두면 수정일 최신순.
+      - name: quickSummary
+        label: 핵심 요약
+        widget: object
+        required: false
+        collapsed: true
+        hint: 본문을 수정할 때 요약도 함께 확인해 주세요. 비운 항목은 표시하지 않습니다.
+        fields:
+          - { name: audience, label: 대상, widget: text, required: false }
+          - { name: keyPoint, label: 핵심 기준, widget: text, required: false }
+          - { name: action, label: 처리 방법, widget: text, required: false }
+      - name: relatedDocs
+        label: 함께 보면 좋은 문서
+        widget: list
+        required: false
+        hint: 최대 3개. 연결할 문서의 주소에서 도메인을 뺀 경로를 입력하세요. 예) /guide/ojt-프로세스-및-진행방법/
+        field: { name: path, label: 문서 경로, widget: string }
       - name: body
         label: 본문
         widget: markdown
@@ -162,6 +211,22 @@ collections:
         widget: number
         required: false
         value_type: int
+      - name: quickSummary
+        label: 핵심 요약
+        widget: object
+        required: false
+        collapsed: true
+        hint: 본문을 수정할 때 요약도 함께 확인해 주세요. 비운 항목은 표시하지 않습니다.
+        fields:
+          - { name: audience, label: 대상, widget: text, required: false }
+          - { name: keyPoint, label: 핵심 기준, widget: text, required: false }
+          - { name: action, label: 처리 방법, widget: text, required: false }
+      - name: relatedDocs
+        label: 함께 보면 좋은 문서
+        widget: list
+        required: false
+        hint: 최대 3개. 연결할 문서의 주소에서 도메인을 뺀 경로를 입력하세요. 예) /guide/ojt-프로세스-및-진행방법/
+        field: { name: path, label: 문서 경로, widget: string }
       - name: body
         label: 본문
         widget: markdown

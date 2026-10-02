@@ -2,197 +2,158 @@
 import Icon from './Icon.astro';
 ---
 
-<div class="search" data-search>
-  <label class="sr-only" for="site-search">검색어를 입력하세요</label>
-
+<div class="search global-search" data-search>
+  <label class="sr-only" for="site-search">전체 문서 검색</label>
   <div class="search__field">
-    <span class="search__icon"><Icon name="search" size={20} /></span>
-    <input
-      class="search__input"
-      id="site-search"
-      type="search"
-      inputmode="search"
-      autocomplete="off"
-      autocapitalize="off"
-      spellcheck="false"
-      enterkeyhint="search"
-      placeholder="무엇이 궁금하세요? (예: 경조사, ㅎㅅㅂ)"
-      data-search-input
-    />
-    <button class="search__clear" type="button" aria-label="검색어 지우기" data-search-clear>
-      ✕
-    </button>
+    <span class="search__icon"><Icon name="search" size={19} /></span>
+    <input class="search__input" id="site-search" type="search" inputmode="search"
+      autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
+      placeholder="전체 문서 검색 (초성도 가능)" aria-controls="search-panel" aria-expanded="false" data-search-input />
+    <kbd class="search__shortcut" aria-hidden="true">Ctrl K</kbd>
+    <button class="search__clear" type="button" aria-label="검색어 지우기" data-search-clear>✕</button>
   </div>
-
-  <p class="search__hint" data-search-hint>
-    초성으로도 찾을 수 있어요 — <strong>ㄱㅈㅅ</strong> → 경조사, <strong>ㅎㅅㅂ</strong> → 회식비
-  </p>
-
-  <p class="search__count" hidden data-search-count></p>
-
-  <ul class="search__results" data-search-results></ul>
-
-  <div class="search__noresult" hidden data-search-noresult>
-    <p><strong data-search-term></strong> 에 대한 결과가 없어요.</p>
-    <p>다른 단어로 검색해 보시거나, 검색어를 지우고 아래 메뉴에서 찾아보세요.</p>
-  </div>
+  <section class="search-panel" id="search-panel" aria-label="검색 결과" hidden data-search-panel>
+    <div class="search-panel__top">
+      <p class="search__hint">초성 검색 <strong>ㄱㅈㅅ</strong> → 경조사</p>
+      <button class="search-panel__close" type="button" data-search-close>닫기</button>
+    </div>
+    <p class="search__count" role="status" aria-live="polite" data-search-status>검색어를 입력해 주세요.</p>
+    <button class="search-retry" type="button" hidden data-search-retry>다시 시도</button>
+    <ul class="search__results" data-search-results></ul>
+  </section>
 </div>
 
 <script>
   import { searchDocs, type SearchDoc } from '../lib/search';
-  import { formatDate } from '../lib/format';
-  import { iconSvg } from '../lib/icons';
-
+  import { noticeState, noticeLabel } from '../lib/notice';
+  const escapeHTML = (value: string) => value.replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[char]!);
   const root = document.querySelector<HTMLElement>('[data-search]');
   if (root) {
     const input = root.querySelector<HTMLInputElement>('[data-search-input]')!;
-    const clearButton = root.querySelector<HTMLButtonElement>('[data-search-clear]')!;
-    const resultList = root.querySelector<HTMLUListElement>('[data-search-results]')!;
-    const countLine = root.querySelector<HTMLElement>('[data-search-count]')!;
-    const hint = root.querySelector<HTMLElement>('[data-search-hint]')!;
-    const noResult = root.querySelector<HTMLElement>('[data-search-noresult]')!;
-    const noResultTerm = root.querySelector<HTMLElement>('[data-search-term]')!;
-
-    // 홈에서 검색 중일 때는 아래 영역(바로가기·최신 공지)을 숨긴다.
-    const homeBody = document.querySelector<HTMLElement>('[data-home-body]');
-
+    const panel = root.querySelector<HTMLElement>('[data-search-panel]')!;
+    const results = root.querySelector<HTMLUListElement>('[data-search-results]')!;
+    const status = root.querySelector<HTMLElement>('[data-search-status]')!;
+    const clear = root.querySelector<HTMLButtonElement>('[data-search-clear]')!;
+    const close = root.querySelector<HTMLButtonElement>('[data-search-close]')!;
+    const retry = root.querySelector<HTMLButtonElement>('[data-search-retry]')!;
     let docs: SearchDoc[] | null = null;
-    let loading: Promise<void> | null = null;
+    let loading: Promise<SearchDoc[]> | null = null;
+    let revision = 0;
+    let debounce = 0;
     let activeIndex = -1;
 
-    const escapeHtml = (value: string) =>
-      value.replace(
-        /[&<>"']/g,
-        (char) =>
-          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!,
-      );
-
-    const loadIndex = () => {
+    const setOpen = (open: boolean) => {
+      panel.hidden = !open;
+      input.setAttribute('aria-expanded', String(open));
+      if (!open) {
+        revision++;
+        window.clearTimeout(debounce);
+      }
+    };
+    const loadIndex = async () => {
+      if (docs) return docs;
       if (!loading) {
-        loading = fetch('/search-index.json')
-          .then((response) => response.json())
-          .then((data: SearchDoc[]) => {
-            docs = data;
-          })
-          .catch(() => {
-            docs = [];
-          });
+        loading = fetch('/search-index.json').then(async (response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          const data = await response.json();
+          if (!Array.isArray(data)) throw new Error('Invalid search index');
+          docs = data as SearchDoc[];
+          return docs;
+        }).finally(() => { loading = null; });
       }
       return loading;
     };
-
-    // 검색창에 손이 닿는 순간 인덱스를 미리 받아둔다.
-    input.addEventListener('focus', loadIndex, { once: true });
-    input.addEventListener('input', loadIndex, { once: true });
-
-    const setActive = (next: number) => {
-      const items = resultList.querySelectorAll<HTMLLIElement>('.search__result');
-      if (items.length === 0) return;
-
-      activeIndex = ((next % items.length) + items.length) % items.length;
-      items.forEach((item, index) => {
-        item.classList.toggle('is-active', index === activeIndex);
-      });
-      items[activeIndex].scrollIntoView({ block: 'nearest' });
-    };
-
-    const renderResults = (query: string) => {
-      if (!docs) return;
-
-      const results = searchDocs(docs, query, 20);
-      activeIndex = -1;
-
-      resultList.innerHTML = results
-        .map(({ doc }) => {
-          return `
-            <li class="search__result">
-              <a class="card" href="${escapeHtml(doc.url)}">
-                <div class="card__top">
-                  <span class="badge">
-                    ${iconSvg(doc.categoryIcon, 14)}
-                    ${escapeHtml(doc.categoryLabel)}
-                  </span>
-                </div>
-                <h3 class="card__title">${escapeHtml(doc.title)}</h3>
-                <p class="card__summary">${escapeHtml(doc.summary)}</p>
-                <span class="meta">${escapeHtml(formatDate(doc.updated))} 기준</span>
-              </a>
-            </li>`;
-        })
-        .join('');
-
-      const hasResults = results.length > 0;
-      countLine.hidden = !hasResults;
-      countLine.textContent = hasResults ? `검색 결과 ${results.length}건` : '';
-
-      noResult.hidden = hasResults;
-      noResultTerm.textContent = query;
-    };
-
-    const reset = () => {
-      resultList.innerHTML = '';
-      countLine.hidden = true;
-      noResult.hidden = true;
-      hint.hidden = false;
-      activeIndex = -1;
-      if (homeBody) homeBody.hidden = false;
-    };
-
-    let debounce = 0;
-    input.addEventListener('input', () => {
+    const runSearch = async () => {
+      const request = ++revision;
       const query = input.value.trim();
-      clearButton.classList.toggle('is-visible', query.length > 0);
-
-      window.clearTimeout(debounce);
-
+      setOpen(true);
+      results.innerHTML = '';
+      activeIndex = -1;
+      retry.hidden = true;
+      clear.classList.toggle('is-visible', query.length > 0);
       if (!query) {
-        reset();
+        status.textContent = '검색어를 입력해 주세요.';
         return;
       }
-
-      hint.hidden = true;
-      if (homeBody) homeBody.hidden = true;
-
-      debounce = window.setTimeout(() => {
-        void loadIndex().then(() => renderResults(query));
-      }, 80);
+      status.textContent = '검색 중…';
+      try {
+        const index = await loadIndex();
+        if (request !== revision) return;
+        const matches = searchDocs(index, query, 20);
+        status.textContent = matches.length ? `검색 결과 ${matches.length}건` : `“${query}”에 대한 결과가 없어요. 다른 단어로 검색해 보세요.`;
+        results.innerHTML = matches.map(({ doc }) => `
+          <li class="search__result"><a class="search-result" href="${escapeHTML(doc.url)}">
+            <span class="search-result__category">${escapeHTML(doc.categoryLabel)}${doc.category === 'notice' && noticeState(doc) !== 'active' ? ` · ${noticeLabel(noticeState(doc))}` : ''}</span>
+            <strong>${escapeHTML(doc.title)}</strong>
+            <span class="search-result__summary">${escapeHTML(doc.summary)}</span>
+          </a></li>`).join('');
+      } catch {
+        if (request !== revision) return;
+        status.textContent = '검색 정보를 불러오지 못했어요. 연결을 확인하고 다시 시도해 주세요.';
+        retry.hidden = false;
+      }
+    };
+    input.addEventListener('focus', () => { void runSearch(); });
+    input.addEventListener('click', () => { if (panel.hidden) void runSearch(); });
+    input.addEventListener('input', () => {
+      revision++;
+      window.clearTimeout(debounce);
+      results.innerHTML = '';
+      activeIndex = -1;
+      retry.hidden = true;
+      clear.classList.toggle('is-visible', input.value.trim().length > 0);
+      if (!input.value.trim()) { void runSearch(); return; }
+      setOpen(true);
+      status.textContent = '검색 중…';
+      debounce = window.setTimeout(() => { void runSearch(); }, 80);
     });
-
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        input.value = '';
-        clearButton.classList.remove('is-visible');
-        reset();
-        return;
-      }
-
-      if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        setActive(activeIndex + 1);
-        return;
-      }
-
-      if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        setActive(activeIndex - 1);
-        return;
-      }
-
-      if (event.key === 'Enter') {
-        const items = resultList.querySelectorAll<HTMLLIElement>('.search__result a');
-        const target = activeIndex >= 0 ? items[activeIndex] : items[0];
-        if (target instanceof HTMLAnchorElement) {
-          event.preventDefault();
-          window.location.href = target.href;
-        }
-      }
-    });
-
-    clearButton.addEventListener('click', () => {
-      input.value = '';
-      clearButton.classList.remove('is-visible');
-      reset();
+    const dismiss = () => {
       input.focus();
+      setOpen(false);
+    };
+    close.addEventListener('click', dismiss);
+    retry.addEventListener('click', () => { void runSearch(); });
+    clear.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      void runSearch();
+    });
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Node && !root.contains(event.target)) setOpen(false);
+    });
+    root.addEventListener('focusout', (event) => {
+      if (!(event.relatedTarget instanceof Node) || !root.contains(event.relatedTarget)) setOpen(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        input.focus();
+        input.select();
+        void runSearch();
+      }
+      if (event.key === 'Escape' && !panel.hidden) {
+        event.preventDefault();
+        dismiss();
+      }
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.isComposing || panel.hidden) return;
+      const links = [...results.querySelectorAll<HTMLAnchorElement>('a')];
+      if (!links.length) return;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        activeIndex = activeIndex < 0
+          ? (event.key === 'ArrowDown' ? 0 : links.length - 1)
+          : (activeIndex + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
+        links.forEach((link, index) => link.parentElement?.classList.toggle('is-active', index === activeIndex));
+        links[activeIndex].scrollIntoView({ block: 'nearest' });
+      }
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        links[Math.max(0, activeIndex)].click();
+      }
     });
   }
 </script>

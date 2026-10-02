@@ -1,0 +1,40 @@
+---
+import { noticeState, noticeLabel, type NoticeMeta } from '../lib/notice';
+interface Props extends NoticeMeta { detail?: boolean; }
+const { noticeStatus = 'active', endsOn, detail = false } = Astro.props;
+const state = noticeState({ noticeStatus, endsOn });
+---
+<span class:list={['notice-status', { 'notice-status--detail': detail }]}
+  data-notice-status={noticeStatus} data-ends-on={endsOn} data-notice-detail={detail ? '' : undefined}
+  hidden={state === 'active'}>
+  {detail ? (state === 'archived' ? '보관된 공지입니다. 이전 안내를 확인할 수 있도록 남겨 두었습니다.' : '종료된 공지입니다. 이전 안내를 확인할 수 있도록 남겨 두었습니다.') : noticeLabel(state)}
+</span>
+
+<script>
+  import { noticeState, noticeLabel, type NoticeState } from '../lib/notice';
+  // 정적 배포 후에도 종료일이 지나면 표시와 홈 목록이 바뀐다.
+  function refreshNotices() {
+    document.querySelectorAll<HTMLElement>('[data-notice-status]').forEach((element) => {
+      const state = noticeState({ noticeStatus: element.dataset.noticeStatus as NoticeState, endsOn: element.dataset.endsOn });
+      element.hidden = state === 'active';
+      element.textContent = element.hasAttribute('data-notice-detail')
+        ? (state === 'archived' ? '보관된 공지입니다. 이전 안내를 확인할 수 있도록 남겨 두었습니다.' : '종료된 공지입니다. 이전 안내를 확인할 수 있도록 남겨 두었습니다.')
+        : noticeLabel(state);
+    });
+    const home = document.querySelector('[data-home-notices]');
+    if (!home) return;
+    let visible = 0;
+    home.querySelectorAll<HTMLElement>('[data-notice-card]').forEach((card) => {
+      const badge = card.querySelector<HTMLElement>('[data-notice-status]');
+      const active = badge && noticeState({ noticeStatus: badge.dataset.noticeStatus as NoticeState, endsOn: badge.dataset.endsOn }) === 'active';
+      card.hidden = !active || visible >= 3;
+      if (!card.hidden) visible++;
+    });
+    const empty = home.querySelector<HTMLElement>('[data-notices-empty]');
+    if (empty) empty.hidden = visible > 0;
+  }
+  refreshNotices();
+  window.setInterval(refreshNotices, 30_000);
+  window.addEventListener('pageshow', refreshNotices);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshNotices(); });
+</script>

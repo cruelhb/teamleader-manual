@@ -13,9 +13,8 @@
 
 `main` 브랜치에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포합니다.
 
-> ⚠️ 관리자 화면에서 **`Sign In with GitHub` 버튼은 동작하지 않습니다** (Netlify 전용).
-> 아래쪽 **`Sign In Using Access Token`** 을 쓰세요. 발급 방법은
-> [CONTENT_GUIDE.md](CONTENT_GUIDE.md) 2장에 있습니다.
+관리자 화면의 **`Sign In with GitHub`** 는 설정된 Cloudflare Workers 인증 중계 서버를 사용합니다.
+액세스 토큰 로그인도 사용할 수 있습니다. 자세한 방법은 [CONTENT_GUIDE.md](CONTENT_GUIDE.md) 2장에 있습니다.
 
 ---
 
@@ -88,9 +87,9 @@ public/admin/
 
 | 메뉴 | 글 |
 | --- | --- |
-| 공지사항 | 이패스손사 얼리버드 강의 신청 안내 |
-| 업무 매뉴얼 | OJT 프로세스 및 진행방법 / 팀별 잔여 회식비 조회 |
-| 기준 및 규정 (복지, 인사 등) | 경조사 안내 (휴가 + 경조사비) |
+| 공지사항 | 사이트 오픈 안내 / 이패스손사 얼리버드 강의 신청 안내 (종료) |
+| 업무 매뉴얼 | OJT 프로세스 및 진행방법 / 팀별 잔여 회식비 조회 / 결근 및 임시결근 처리방법 / 채용요청서 상신 방법 |
+| 기준 및 규정 (복지, 인사 등) | 경조사 안내 (휴가 + 경조사비) / 무급휴가 사용 기준 및 방법 |
 
 ## 아직 남은 일
 
@@ -107,5 +106,5 @@ public/admin/
   ```bash
   powershell -ExecutionPolicy Bypass -File scripts\make-og-image.ps1
   ```
-- 배포 전 문제 확인: `npm run build` (에러 없이 끝나면 정상)
+- 배포 전 문제 확인: `npm test` (빌드 및 자동 검사, Node 22.6 이상)
 - 지금까지 작업은 전부 git에 저장되어 있습니다. `git log` 로 변경 이력을 볼 수 있습니다.

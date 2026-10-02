@@ -52,6 +52,7 @@ export const GET: APIRoute = async () => {
         categoryIcon: CATEGORIES[category].icon,
         updated: toIsoDate(entry.data.updated),
         body: toPlainText(entry.body ?? '').slice(0, BODY_LIMIT),
+        ...(category === 'notice' ? { noticeStatus: entry.data.noticeStatus, endsOn: entry.data.endsOn } : {}),
       });
     }
   }

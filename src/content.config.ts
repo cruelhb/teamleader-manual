@@ -29,6 +29,23 @@ const docSchema = z.object({
   /** 한 줄 요약. 검색 결과와 카카오톡 미리보기에 그대로 노출된다. */
   summary: z.string(),
 
+  /** 본문과 함께 관리하는 핵심 요약. 비어 있는 항목은 표시하지 않는다. */
+  quickSummary: z.object({
+    audience: optionalString,
+    keyPoint: optionalString,
+    action: optionalString,
+  }).nullish(),
+  relatedDocs: z.array(z.string().regex(/^\/(notice|guide|welfare)\/[^?#]+\/$/))
+    .max(3).nullish().transform((value) => value ?? []),
+  noticeStatus: z.enum(['active', 'closed', 'archived']).nullish()
+    .transform((value) => value ?? 'active'),
+  endsOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((value) => {
+      const date = new Date(`${value}T00:00:00Z`);
+      return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+    }, '실제 존재하는 날짜를 YYYY-MM-DD 형식으로 입력하세요.')
+    .nullish().transform((value) => value ?? undefined),
+
   /** 검색에 걸리게 할 추가 키워드 (제목에 없는 동의어를 넣으면 좋다) */
   tags: z
     .array(z.string())

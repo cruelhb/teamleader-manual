@@ -2,6 +2,8 @@
 import Icon from './Icon.astro';
 import { formatDate } from '../lib/format';
 import type { IconName } from '../lib/icons';
+import NoticeStatus from './NoticeStatus.astro';
+import type { NoticeState } from '../lib/notice';
 
 interface Props {
   url: string;
@@ -9,20 +11,25 @@ interface Props {
   summary: string;
   updated: Date | string;
   pinned?: boolean;
+  notice?: boolean;
+  noticeStatus?: NoticeState;
+  endsOn?: string;
+  hidden?: boolean;
   /** 카테고리 배지를 보여줄지 (카테고리 목록 안에서는 중복이라 끈다) */
   categoryLabel?: string;
   categoryIcon?: IconName;
 }
 
-const { url, title, summary, updated, pinned = false, categoryLabel, categoryIcon } = Astro.props;
+const { url, title, summary, updated, pinned = false, categoryLabel, categoryIcon, notice, noticeStatus, endsOn, hidden } = Astro.props;
 ---
 
-<li>
+<li data-notice-card={notice ? '' : undefined} hidden={hidden}>
   <a class="card" href={url}>
     {
-      (pinned || categoryLabel) && (
+      (pinned || categoryLabel || notice) && (
         <div class="card__top">
           {pinned && <span class="badge badge--pinned">중요</span>}
+          {notice && <NoticeStatus noticeStatus={noticeStatus} endsOn={endsOn} />}
           {categoryLabel && (
             <span class="badge">
               {categoryIcon && <Icon name={categoryIcon} size={14} />}

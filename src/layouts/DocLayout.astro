@@ -5,6 +5,9 @@ import Icon from '../components/Icon.astro';
 import { CATEGORIES, type CategoryKey } from '../lib/categories';
 import { formatDate } from '../lib/format';
 import { bodyIconCss } from '../lib/icons';
+import NoticeStatus from '../components/NoticeStatus.astro';
+import DocTools from '../components/DocTools.astro';
+import type { NoticeState } from '../lib/notice';
 
 interface Props {
   category: CategoryKey;
@@ -13,9 +16,16 @@ interface Props {
   updated: Date | string;
   source?: string;
   file?: string;
+  quickSummary?: { audience?: string; keyPoint?: string; action?: string } | null;
+  relatedDocs?: Array<{ url: string; title: string; summary: string }>;
+  noticeStatus?: NoticeState;
+  endsOn?: string;
 }
 
-const { category, title, summary, updated, source, file } = Astro.props;
+const { category, title, summary, updated, source, file, quickSummary, relatedDocs = [], noticeStatus, endsOn } = Astro.props;
+const summaryRows = [
+  ['대상', quickSummary?.audience], ['핵심 기준', quickSummary?.keyPoint], ['처리 방법', quickSummary?.action],
+].filter(([, value]) => value);
 const categoryInfo = CATEGORIES[category];
 
 // 본문에서 <i class="ico ico--이름"></i> 로 쓰는 아이콘의 모양 정의.
@@ -42,6 +52,16 @@ const iconCss = bodyIconCss();
       {source && <span><strong>근거</strong> {source}</span>}
     </div>
 
+    {category === 'notice' && <>
+      <NoticeStatus noticeStatus={noticeStatus} endsOn={endsOn} detail />
+      {endsOn && <p class="notice-deadline">신청·안내 종료일: <time datetime={endsOn}>{endsOn}</time> (한국 시간, 당일 포함)</p>}
+    </>}
+    {summaryRows.length > 0 && <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <h2 id="quick-summary-title">핵심 요약</h2>
+      <dl>{summaryRows.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+    </section>}
+    <DocTools />
+
     {
       file && (
         <p>
@@ -57,12 +77,16 @@ const iconCss = bodyIconCss();
     </div>
 
     <ShareButton />
+    {relatedDocs.length > 0 && <section class="related-docs" aria-labelledby="related-docs-title">
+      <h2 id="related-docs-title">함께 보면 좋은 문서</h2>
+      <ul>{relatedDocs.map((doc) => <li><a href={doc.url}><strong>{doc.title}</strong><span>{doc.summary}</span></a></li>)}</ul>
+    </section>}
   </article>
 </BaseLayout>
 
 <script>
   // 1) 표를 감싸고, 각 칸에 머리글 이름을 data-label 로 붙인다.
-  //    넓은 화면에서는 가로 스크롤 컨테이너로, 좁은 화면(560px 이하)에서는
+  //    넓은 화면에서는 표로, 좁은 화면(700px 이하)에서는
   //    CSS가 이 라벨을 이용해 표를 카드 형태로 바꾼다.
   document.querySelectorAll<HTMLTableElement>('[data-prose] table').forEach((table) => {
     if (!table.parentElement?.classList.contains('table-scroll')) {

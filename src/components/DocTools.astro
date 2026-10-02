@@ -1,0 +1,90 @@
+<details class="doc-toc" data-doc-toc hidden>
+  <summary>이 문서에서 찾기</summary>
+  <nav aria-label="이 문서의 목차"><ol data-toc-list></ol></nav>
+</details>
+<p class="section-copy-status" role="status" aria-live="polite" data-section-copy-status></p>
+
+<script>
+  import { copyText } from '../lib/clipboard';
+  const prose = document.querySelector<HTMLElement>('[data-prose]');
+  const toc = document.querySelector<HTMLDetailsElement>('[data-doc-toc]');
+  const list = document.querySelector<HTMLOListElement>('[data-toc-list]');
+  const status = document.querySelector<HTMLElement>('[data-section-copy-status]');
+  if (prose && toc && list && status) {
+    const targets = [...prose.querySelectorAll<HTMLElement>('h2[id], h3[id], summary[id]')];
+    const labels = targets.map((target) => {
+      const clone = target.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('.summary-hint, .ico').forEach((item) => item.remove());
+      return clone.textContent?.trim() ?? '';
+    });
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    toc.open = desktop.matches;
+    desktop.addEventListener('change', () => { toc.open = desktop.matches; });
+    toc.hidden = targets.length < 2;
+    let announcementTimer = 0;
+    targets.forEach((target, index) => {
+      const label = labels[index];
+      const href = `#${encodeURIComponent(target.id)}`;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'section-copy';
+      button.textContent = '링크 복사';
+      button.setAttribute('aria-label', `${label} 항목 링크 복사`);
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const url = new URL(window.location.href);
+        url.hash = target.id;
+        const copied = await copyText(url.href);
+        window.clearTimeout(announcementTimer);
+        status.textContent = copied ? `“${label}” 항목 링크를 복사했어요.` : '자동 복사가 지원되지 않습니다. 아래 주소를 복사해 주세요.';
+        document.querySelector('[data-copy-fallback]')?.remove();
+        if (!copied) {
+          const field = document.createElement('input');
+          field.dataset.copyFallback = '';
+          field.className = 'section-copy-fallback';
+          field.readOnly = true;
+          field.value = url.href;
+          field.setAttribute('aria-label', '복사할 항목 주소');
+          status.after(field);
+          field.focus();
+          field.select();
+        } else {
+          announcementTimer = window.setTimeout(() => { status.textContent = ''; }, 3000);
+        }
+      });
+      // 목차에 복사 버튼을 둬 접힌 항목의 주소도 바로 복사할 수 있다.
+      const row = document.createElement('li');
+      if (target.tagName !== 'H2') row.className = 'doc-toc__sub';
+      const link = document.createElement('a');
+      link.href = href;
+      link.textContent = label;
+      row.append(link, button);
+      list.appendChild(row);
+    });
+    const revealHash = () => {
+      let id: string;
+      try { id = decodeURIComponent(window.location.hash.slice(1)); } catch { return; }
+      const target = document.getElementById(id);
+      if (!target || !prose.contains(target)) return;
+      let parent: HTMLElement | null = target;
+      while (parent && parent !== prose) {
+        if (parent instanceof HTMLDetailsElement) parent.open = true;
+        parent = parent.parentElement;
+      }
+      if (!desktop.matches) toc.open = false;
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start' });
+        if (target.tagName !== 'SUMMARY') target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+      });
+    };
+    list.addEventListener('click', (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a') : null;
+      if (link && link.hash === window.location.hash) revealHash();
+    });
+    window.addEventListener('hashchange', revealHash);
+    window.addEventListener('load', revealHash, { once: true });
+    revealHash();
+  }
+</script>

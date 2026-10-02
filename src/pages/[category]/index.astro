@@ -5,6 +5,7 @@ import DocCard from '../../components/DocCard.astro';
 import Icon from '../../components/Icon.astro';
 import { CATEGORIES, CATEGORY_ORDER, type CategoryKey } from '../../lib/categories';
 import { sortDocs } from '../../lib/docs';
+import type { NoticeState } from '../../lib/notice';
 
 export async function getStaticPaths() {
   return Promise.all(
@@ -16,6 +17,8 @@ export async function getStaticPaths() {
         summary: entry.data.summary,
         updated: entry.data.updated,
         pinned: entry.data.pinned,
+        noticeStatus: entry.data.noticeStatus,
+        endsOn: entry.data.endsOn,
       }));
 
       return { params: { category }, props: { category, docs } };
@@ -25,7 +28,7 @@ export async function getStaticPaths() {
 
 const { category, docs } = Astro.props as {
   category: CategoryKey;
-  docs: Array<{ id: string; title: string; summary: string; updated: Date; pinned: boolean }>;
+  docs: Array<{ id: string; title: string; summary: string; updated: Date; pinned: boolean; noticeStatus: NoticeState; endsOn?: string }>;
 };
 
 const info = CATEGORIES[category];
@@ -56,6 +59,9 @@ const info = CATEGORIES[category];
             summary={doc.summary}
             updated={doc.updated}
             pinned={doc.pinned}
+            notice={category === 'notice'}
+            noticeStatus={doc.noticeStatus}
+            endsOn={doc.endsOn}
           />
         ))}
       </ul>

@@ -40,7 +40,6 @@ const iconCss = bodyIconCss();
     <p class="doc__breadcrumb">
       <a class="back-link" href={`/${category}/`}>
         <Icon name="arrowLeft" size={17} />
-        <Icon name={categoryInfo.icon} size={16} />
         {categoryInfo.label}
       </a>
     </p>
@@ -85,6 +84,7 @@ const iconCss = bodyIconCss();
 </BaseLayout>
 
 <script>
+  import { iconSvg } from '../lib/icons';
   // 1) 표를 감싸고, 각 칸에 머리글 이름을 data-label 로 붙인다.
   //    넓은 화면에서는 표로, 좁은 화면(700px 이하)에서는
   //    CSS가 이 라벨을 이용해 표를 카드 형태로 바꾼다.
@@ -140,7 +140,7 @@ const iconCss = bodyIconCss();
   lightbox.className = 'lightbox';
   lightbox.hidden = true;
   lightbox.innerHTML =
-    '<button class="lightbox__close" type="button" aria-label="닫기">✕</button><img alt="" />';
+    `<button class="lightbox__close" type="button" aria-label="닫기">${iconSvg('close', 22)}</button><img alt="" />`;
   document.body.appendChild(lightbox);
 
   const lightboxImage = lightbox.querySelector('img')!;

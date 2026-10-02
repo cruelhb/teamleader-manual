@@ -16,19 +16,19 @@ const isCurrent = (url: string) => currentPath === url.replace(/\/$/, '') || (ur
 
 <details class="doc-navigation" open data-doc-navigation>
   <summary class="doc-navigation__toggle">
-    <Icon name="guide" size={19} />
+    <Icon name="menu" size={18} />
     <span>문서 메뉴</span>
-    <span class="doc-navigation__chevron" aria-hidden="true"></span>
+    <Icon name="chevronDown" size={16} class="icon doc-navigation__chevron" />
   </summary>
   <nav class="doc-navigation__body" aria-label="문서 탐색">
     <a class="nav-home" href="/" aria-current={isCurrent('/') ? 'page' : undefined}>
-      <Icon name="logo" size={17} /> 홈
+      <Icon name="home" size={18} /> 홈
     </a>
     {groups.map((group) => (
       <section class="nav-group">
         <h2>
           <a href={`/${group.key}/`} aria-current={isCurrent(`/${group.key}/`) ? 'page' : undefined}>
-            <Icon name={group.icon} size={17} />
+            <Icon name={group.icon} size={18} />
             <span>{group.key === 'welfare' ? '기준 및 규정' : group.label}</span>
             <span class="nav-group__count">{group.docs.length}</span>
           </a>

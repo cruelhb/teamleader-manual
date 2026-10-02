@@ -34,7 +34,7 @@ export const CATEGORIES: Record<CategoryKey, CategoryInfo> = {
   },
   welfare: {
     label: '기준 및 규정 (복지, 인사 등)',
-    icon: 'welfare',
+    icon: 'rules',
     description: '연차, 경조사, 교육비 등 전 인원에게 공통 적용되는 규정입니다.',
     sort: 'order',
   },

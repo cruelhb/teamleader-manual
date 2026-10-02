@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import site from '../data/site.json';
 import Icon from '../components/Icon.astro';
+import { faviconDataUri } from '../lib/icons';
 import SearchBox from '../components/SearchBox.astro';
 import DocNavigation from '../components/DocNavigation.astro';
 
@@ -22,14 +23,7 @@ const pageTitle = title ? `${title} | ${site.name}` : `${site.name} — ${site.t
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-default.png', Astro.site);
 
-// 파비콘. 이미지 파일 없이 SVG 를 그대로 주소에 담는다.
-// 헤더 로고와 같은 "겹친 마름모"(src/lib/icons.ts 의 logo)를 브랜드색 사각형 위에 올린 것.
-// 작은 크기에서도 알아보이게 선 대신 면으로 채웠다. '#' 은 주소에서 %23 으로 써야 한다.
-const favicon =
-  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>" +
-  "<rect width='100' height='100' rx='22' fill='%231f5fa9'/>" +
-  "<path d='M50 21 79 50 50 79 21 50Z' fill='none' stroke='white' stroke-width='7'/>" +
-  "<path d='M50 39 61 50 50 61 39 50Z' fill='white'/></svg>";
+const favicon = faviconDataUri();
 ---
 
 <!doctype html>

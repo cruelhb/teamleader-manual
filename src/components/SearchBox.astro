@@ -25,7 +25,6 @@ import Icon from './Icon.astro';
 
 <script>
   import { searchDocs, type SearchDoc } from '../lib/search';
-  import { noticeState, noticeLabel } from '../lib/notice';
   const escapeHTML = (value: string) => value.replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   })[char]!);
@@ -85,7 +84,7 @@ import Icon from './Icon.astro';
         status.textContent = matches.length ? `검색 결과 ${matches.length}건` : `“${query}”에 대한 결과가 없어요. 다른 단어로 검색해 보세요.`;
         results.innerHTML = matches.map(({ doc }) => `
           <li class="search__result"><a class="search-result" href="${escapeHTML(doc.url)}">
-            <span class="search-result__category">${escapeHTML(doc.categoryLabel)}${doc.category === 'notice' && noticeState(doc) !== 'active' ? ` · ${noticeLabel(noticeState(doc))}` : ''}</span>
+            <span class="search-result__category">${escapeHTML(doc.categoryLabel)}</span>
             <strong>${escapeHTML(doc.title)}</strong>
             <span class="search-result__summary">${escapeHTML(doc.summary)}</span>
           </a></li>`).join('');

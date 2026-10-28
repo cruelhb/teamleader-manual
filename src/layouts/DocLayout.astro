@@ -5,9 +5,7 @@ import Icon from '../components/Icon.astro';
 import { CATEGORIES, type CategoryKey } from '../lib/categories';
 import { formatDate } from '../lib/format';
 import { bodyIconCss } from '../lib/icons';
-import NoticeStatus from '../components/NoticeStatus.astro';
 import DocTools from '../components/DocTools.astro';
-import type { NoticeState } from '../lib/notice';
 
 interface Props {
   category: CategoryKey;
@@ -18,11 +16,9 @@ interface Props {
   file?: string;
   quickSummary?: { audience?: string; keyPoint?: string; action?: string } | null;
   relatedDocs?: Array<{ url: string; title: string; summary: string }>;
-  noticeStatus?: NoticeState;
-  endsOn?: string;
 }
 
-const { category, title, summary, updated, source, file, quickSummary, relatedDocs = [], noticeStatus, endsOn } = Astro.props;
+const { category, title, summary, updated, source, file, quickSummary, relatedDocs = [] } = Astro.props;
 const summaryRows = [
   ['대상', quickSummary?.audience], ['핵심 기준', quickSummary?.keyPoint], ['처리 방법', quickSummary?.action],
 ].filter(([, value]) => value);
@@ -51,10 +47,6 @@ const iconCss = bodyIconCss();
       {source && <span><strong>근거</strong> {source}</span>}
     </div>
 
-    {category === 'notice' && <>
-      <NoticeStatus noticeStatus={noticeStatus} endsOn={endsOn} detail />
-      {endsOn && <p class="notice-deadline">신청·안내 종료일: <time datetime={endsOn}>{endsOn}</time> (한국 시간, 당일 포함)</p>}
-    </>}
     {summaryRows.length > 0 && <section class="quick-summary" aria-labelledby="quick-summary-title">
       <h2 id="quick-summary-title">핵심 요약</h2>
       <dl>{summaryRows.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>

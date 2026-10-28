@@ -1,19 +1,24 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
-import { noticeState } from '../src/lib/notice.ts';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import sectionIds from '../scripts/rehype-section-ids.mjs';
 
-test('한국 시간 종료일의 마지막 초까지 유효하고 다음 날 종료', () => {
-  const meta = { endsOn: '2026-08-31' };
-  assert.equal(noticeState(meta, new Date('2026-08-31T14:59:59Z')), 'active');
-  assert.equal(noticeState(meta, new Date('2026-08-31T15:00:00Z')), 'closed');
+const dist = (path) => new URL(`../dist/${path}`, import.meta.url);
+
+test('홈에 업무 매뉴얼·기준 및 규정의 모든 문서가 카드로 나온다', () => {
+  const html = readFileSync(dist('index.html'), 'utf8');
+  for (const category of ['guide', 'welfare']) {
+    const ids = readdirSync(new URL(`../src/content/${category}/`, import.meta.url))
+      .filter((name) => name.endsWith('.md'))
+      .map((name) => name.slice(0, -3).toLowerCase());
+    assert.ok(ids.length > 0);
+    for (const id of ids) assert.ok(html.includes(`href="/${category}/${id}/"`), `${category}/${id} 카드 없음`);
+  }
 });
-test('상시 공지와 수동 종료·보관 상태', () => {
-  const now = new Date('2026-10-02T00:00:00Z');
-  assert.equal(noticeState({}, now), 'active');
-  assert.equal(noticeState({ noticeStatus: 'closed', endsOn: '2027-12-31' }, now), 'closed');
-  assert.equal(noticeState({ noticeStatus: 'archived', endsOn: '2026-01-01' }, now), 'archived');
+test('공지사항 메뉴와 페이지가 남아 있지 않다', () => {
+  assert.equal(existsSync(dist('notice')), false);
+  const html = readFileSync(dist('index.html'), 'utf8') + readFileSync(dist('search-index.json'), 'utf8');
+  assert.doesNotMatch(html, /\/notice\/|공지사항/);
 });
 test('접힌 항목 ID는 요약 힌트와 무관하고 기존 ID·중복 제목과 충돌하지 않는다', () => {
   const summary = (hint) => ({ type:'element', tagName:'summary', properties:{}, children:[

@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
 import { sortDocs } from '../lib/docs';
 import Icon from './Icon.astro';
-import NoticeStatus from './NoticeStatus.astro';
 
 const currentPath = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
 const groups = await Promise.all(CATEGORY_ORDER.map(async (key) => ({
@@ -37,7 +36,6 @@ const isCurrent = (url: string) => currentPath === url.replace(/\/$/, '') || (ur
           {group.docs.map((doc) => (
             <li><a href={`/${group.key}/${doc.id}/`} aria-current={isCurrent(`/${group.key}/${doc.id}/`) ? 'page' : undefined}>
               {doc.data.title}
-              {group.key === 'notice' && <NoticeStatus noticeStatus={doc.data.noticeStatus} endsOn={doc.data.endsOn} />}
             </a></li>
           ))}
         </ul>

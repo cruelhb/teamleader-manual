@@ -270,8 +270,26 @@ main {
   line-height: 1.6;
 }
 
+/* 카드 격자 — 홈과 카테고리 목록. 폰은 한 줄에 하나, 넓은 화면은 두 개.
+   카드 높이를 맞추고 날짜는 카드 아래쪽에 붙인다. */
+
+.card-list--grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 14px;
+}
+
+.card-list--grid .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-list--grid .meta {
+  margin-top: auto;
+}
+
 /* ==========================================================================
-   홈 — 자주 찾는 항목과 최신 공지
+   홈 — 카테고리별 문서 카드
    ========================================================================== */
 
 .hero {
@@ -305,53 +323,20 @@ main {
   gap: 10px;
 }
 
-.section__more {
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.shortcut-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 560px) {
-  .shortcut-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-.shortcut {
-  display: flex;
-  flex-direction: column;
+.section__heading {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  min-height: 92px;
-  padding: 14px 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-size: 0.85rem;
-  font-weight: 550;
-  text-align: center;
-  line-height: 1.35;
-  box-shadow: var(--shadow);
 }
 
-.shortcut:hover {
-  border-color: var(--brand);
-  text-decoration: none;
+.section__heading .icon {
+  color: #526a84;
 }
 
-.shortcut__icon {
-  display: flex;
-  color: var(--brand);
+.section__count {
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  font-weight: 500;
 }
 
 /* ==========================================================================
@@ -1242,20 +1227,11 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 .docs-content { min-width: 0; width: 100%; max-width: 960px; }
 .docs-content main { min-height: calc(100dvh - 200px); padding: 42px 0 60px; }
 .docs-content .site-footer { padding: 18px 0 28px; font-size: 0.78rem; }
-.hero { padding: 0 0 26px; text-align: left; border-bottom: 1px solid var(--border); }
-.hero__eyebrow { margin: 0 0 16px; color: var(--brand); font-size: 0.8rem; font-weight: 650; }
-.hero__title { margin-bottom: 14px; font-size: clamp(1.65rem, 2.4vw, 2.25rem); line-height: 1.35; letter-spacing: -0.045em; }
-.hero__tagline { margin-bottom: 12px; color: var(--text); font-size: 1.02rem; }
-.hero__description { margin: 0; color: var(--text-muted); font-size: 0.9rem; line-height: 1.85; }
+.hero { padding: 0 0 24px; text-align: left; border-bottom: 1px solid var(--border); }
+.hero__title { margin-bottom: 10px; font-size: clamp(1.65rem, 2.4vw, 2.25rem); line-height: 1.35; letter-spacing: -0.045em; }
+.hero__tagline { margin: 0; color: var(--text-muted); font-size: 1rem; }
 .section { margin-top: 32px; }
 .section__title { font-size: 1rem; margin-bottom: 16px; }
-.shortcut-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.shortcut { align-items: flex-start; text-align: left; min-height: 126px; padding: 22px; gap: 18px; font-size: 0.94rem; box-shadow: none; }
-.shortcut:hover { background: #f8faff; }
-.shortcut__icon { padding: 0; color: #526a84; }
-.shortcut__icon .icon { width: 25px; height: 25px; }
-.shortcut:hover .shortcut__icon { color: var(--brand); }
-.section__more { display: inline-flex; align-items: center; gap: 6px; }
 .card { box-shadow: none; padding: 22px 24px; }
 .card:hover { box-shadow: none; background: #f8faff; }
 .card__title { font-size: 1rem; }
@@ -1320,11 +1296,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   .docs-shell { padding-inline: 18px; }
   .hero__title { font-size: 1.55rem; }
   .hero__tagline { font-size: 0.92rem; }
-  .hero__description { font-size: 0.84rem; }
   .hero { padding-bottom: 22px; }
-  .shortcut-grid { grid-template-columns: 1fr; gap: 8px; }
-  .shortcut { flex-direction: row; align-items: center; justify-content: flex-start; min-height: 66px; padding: 12px 16px; gap: 14px; }
-  .shortcut__icon { padding: 0; }
+  .card-list--grid { gap: 10px; }
   .card { padding: 18px; }
   .search-panel { padding: 12px; }
   .doc__title { font-size: 1.5rem; }
@@ -1356,9 +1329,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 .related-docs a:hover { background: var(--brand-soft); border-color: var(--brand); }
 .related-docs strong { font-size: 0.95rem; }
 .related-docs span { color: var(--text-muted); font-size: 0.84rem; }
-.notice-status { display: inline-block; padding: 2px 8px; border-radius: 5px; background: #eef0f3; color: #526074; font-size: 0.75rem; font-weight: 650; }
-.notice-status--detail { display: block; margin-top: 20px; padding: 14px 18px; border-left: 3px solid #7b8796; font-size: 0.9rem; font-weight: 500; }
-.notice-deadline { color: var(--text-muted); font-size: 0.83rem; }
 @media(max-width: 559px) {
   .quick-summary { padding: 16px; }
   .quick-summary dl > div { grid-template-columns: 1fr; gap: 4px; }

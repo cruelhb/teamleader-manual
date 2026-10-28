@@ -1,14 +1,14 @@
 /**
  * 사이트의 카테고리 정의.
  *
- * 여기 키(notice/guide/...)가 곧 URL 경로이자 src/content/ 하위 폴더 이름이다.
+ * 여기 키(guide/welfare)가 곧 URL 경로이자 src/content/ 하위 폴더 이름이다.
  * 카테고리를 추가하려면 (1) 여기에 항목을 넣고 (2) src/content.config.ts 의
  * collections 에 같은 키를 추가하고 (3) src/content/<키>/ 폴더를 만들면 된다.
  */
 
 import type { IconName } from './icons';
 
-export type CategoryKey = 'notice' | 'guide' | 'welfare';
+export type CategoryKey = 'guide' | 'welfare';
 
 export interface CategoryInfo {
   label: string;
@@ -20,12 +20,6 @@ export interface CategoryInfo {
 }
 
 export const CATEGORIES: Record<CategoryKey, CategoryInfo> = {
-  notice: {
-    label: '공지사항',
-    icon: 'notice',
-    description: '전 인원 공통 공지입니다. 중요한 공지는 맨 위에 고정됩니다.',
-    sort: 'date',
-  },
   guide: {
     label: '업무 매뉴얼',
     icon: 'guide',
@@ -41,7 +35,7 @@ export const CATEGORIES: Record<CategoryKey, CategoryInfo> = {
 };
 
 /** 네비게이션에 표시할 순서 */
-export const CATEGORY_ORDER: CategoryKey[] = ['notice', 'guide', 'welfare'];
+export const CATEGORY_ORDER: CategoryKey[] = ['guide', 'welfare'];
 
 export const isCategoryKey = (value: string): value is CategoryKey =>
   Object.prototype.hasOwnProperty.call(CATEGORIES, value);

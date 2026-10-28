@@ -40,8 +40,6 @@ const relatedDocs = [...new Set(entry.data.relatedDocs as string[])].map((url) =
   file={entry.data.file}
   quickSummary={entry.data.quickSummary}
   relatedDocs={relatedDocs}
-  noticeStatus={entry.data.noticeStatus}
-  endsOn={entry.data.endsOn}
 >
   <Content />
 </DocLayout>

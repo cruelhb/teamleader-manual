@@ -4,69 +4,49 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DocCard from '../components/DocCard.astro';
 import Icon from '../components/Icon.astro';
 import site from '../data/site.json';
-import shortcuts from '../data/shortcuts.json';
-import { CATEGORIES } from '../lib/categories';
-import type { IconName } from '../lib/icons';
+import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
 import { sortDocs } from '../lib/docs';
-import { noticeState } from '../lib/notice';
 
-const notices = sortDocs(await getCollection('notice'), CATEGORIES.notice.sort);
-const visibleNotices = new Set(notices.filter((item) => noticeState(item.data) === 'active').slice(0, 3).map((item) => item.id));
+// 홈은 모든 문서를 카테고리별 카드로 보여준다. 정렬은 각 카테고리 목록과 같다.
+const groups = await Promise.all(CATEGORY_ORDER.map(async (key) => ({
+  key,
+  ...CATEGORIES[key],
+  docs: sortDocs(await getCollection(key), CATEGORIES[key].sort),
+})));
 ---
 
 <BaseLayout>
   <section class="hero">
-    <p class="hero__eyebrow">서면심사본부 · 업무 가이드</p>
     <h1 class="hero__title">{site.name}</h1>
     <p class="hero__tagline">{site.tagline}</p>
-    <p class="hero__description">궁금한 내용을 검색하거나 문서 메뉴에서 찾아보세요.<br />필요한 안내는 링크 하나로 함께 나눌 수 있습니다.</p>
   </section>
 
-  <div>
-    <section class="section">
-      <h2 class="section__title">자주 찾는 항목</h2>
-      <ul class="shortcut-grid">
-        {
-          shortcuts.map((shortcut) => (
-            <li>
-              <a class="shortcut" href={shortcut.url}>
-                <span class="shortcut__icon">
-                  <Icon name={shortcut.icon as IconName} size={22} />
-                </span>
-                {shortcut.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-
-    <section class="section" data-home-notices>
-      <h2 class="section__title">
-        최신 공지
-        <a class="section__more" href="/notice/">전체 보기 <Icon name="arrowRight" size={15} /></a>
+  {groups.map((group) => (
+    <section class="section" aria-labelledby={`home-${group.key}`}>
+      <h2 class="section__title" id={`home-${group.key}`}>
+        <span class="section__heading">
+          <Icon name={group.icon} size={19} />
+          {group.label}
+        </span>
+        <span class="section__count">{group.docs.length}건</span>
       </h2>
-
       {
-        notices.length > 0 ? (
-          <ul class="card-list">
-            {notices.map((notice) => (
+        group.docs.length > 0 ? (
+          <ul class="card-list card-list--grid">
+            {group.docs.map((doc) => (
               <DocCard
-                url={`/notice/${notice.id}/`}
-                title={notice.data.title}
-                summary={notice.data.summary}
-                updated={notice.data.updated}
-                pinned={notice.data.pinned}
-                notice
-                noticeStatus={notice.data.noticeStatus}
-                endsOn={notice.data.endsOn}
-                hidden={!visibleNotices.has(notice.id)}
+                url={`/${group.key}/${doc.id}/`}
+                title={doc.data.title}
+                summary={doc.data.summary}
+                updated={doc.data.updated}
+                pinned={doc.data.pinned}
               />
             ))}
           </ul>
-        ) : null
+        ) : (
+          <p class="empty">아직 등록된 내용이 없습니다.</p>
+        )
       }
-      <p class="empty" data-notices-empty hidden={visibleNotices.size > 0}>현재 진행 중인 공지가 없습니다. 이전 공지는 전체 보기에서 확인하세요.</p>
     </section>
-  </div>
+  ))}
 </BaseLayout>

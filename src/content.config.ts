@@ -35,16 +35,8 @@ const docSchema = z.object({
     keyPoint: optionalString,
     action: optionalString,
   }).nullish(),
-  relatedDocs: z.array(z.string().regex(/^\/(notice|guide|welfare)\/[^?#]+\/$/))
+  relatedDocs: z.array(z.string().regex(/^\/(guide|welfare)\/[^?#]+\/$/))
     .max(3).nullish().transform((value) => value ?? []),
-  noticeStatus: z.enum(['active', 'closed', 'archived']).nullish()
-    .transform((value) => value ?? 'active'),
-  endsOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
-    .refine((value) => {
-      const date = new Date(`${value}T00:00:00Z`);
-      return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-    }, '실제 존재하는 날짜를 YYYY-MM-DD 형식으로 입력하세요.')
-    .nullish().transform((value) => value ?? undefined),
 
   /** 검색에 걸리게 할 추가 키워드 (제목에 없는 동의어를 넣으면 좋다) */
   tags: z
@@ -58,7 +50,7 @@ const docSchema = z.object({
   /** 근거 규정 출처 (예: 취업규칙 제32조). 복지·인사 문서는 되도록 채운다. */
   source: optionalString,
 
-  /** 목록 상단 고정 여부 (주로 공지사항용) */
+  /** 목록 상단 고정 여부 ("중요" 표시) */
   pinned: z
     .boolean()
     .nullish()
@@ -87,7 +79,6 @@ const docCollection = (dir: string) =>
   });
 
 export const collections = {
-  notice: docCollection('notice'),
   guide: docCollection('guide'),
   welfare: docCollection('welfare'),
 };

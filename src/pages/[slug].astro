@@ -1,0 +1,32 @@
+---
+import { getCollection, render } from 'astro:content';
+import DocLayout from '../layouts/DocLayout.astro';
+
+// 문서 하나 = 주소 하나. 주소는 /문서-id/ 로 짧게 둔다 (카카오톡 공유용).
+export async function getStaticPaths() {
+  const entries = await getCollection('docs');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const allDocs = (await getCollection('docs'))
+  .map((doc) => ({ url: `/${doc.id}/`, title: doc.data.title, summary: doc.data.summary }));
+const relatedDocs = [...new Set(entry.data.relatedDocs as string[])].map((url) => {
+  const doc = allDocs.find((item) => item.url === decodeURI(url));
+  if (!doc) throw new Error(`관련 문서를 찾을 수 없습니다: ${entry.id} → ${url}`);
+  return doc;
+}).filter((doc) => doc.url !== `/${entry.id}/`);
+---
+
+<DocLayout
+  title={entry.data.title}
+  summary={entry.data.summary}
+  updated={entry.data.updated}
+  source={entry.data.source}
+  file={entry.data.file}
+  quickSummary={entry.data.quickSummary}
+  relatedDocs={relatedDocs}
+>
+  <Content />
+</DocLayout>

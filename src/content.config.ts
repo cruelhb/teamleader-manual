@@ -35,7 +35,7 @@ const docSchema = z.object({
     keyPoint: optionalString,
     action: optionalString,
   }).nullish(),
-  relatedDocs: z.array(z.string().regex(/^\/(guide|welfare)\/[^?#]+\/$/))
+  relatedDocs: z.array(z.string().regex(/^\/[^/?#]+\/$/))
     .max(3).nullish().transform((value) => value ?? []),
 
   /** 검색에 걸리게 할 추가 키워드 (제목에 없는 동의어를 넣으면 좋다) */
@@ -71,14 +71,13 @@ const docSchema = z.object({
 
 export type DocSchema = z.infer<typeof docSchema>;
 
-/** 카테고리 폴더 하나를 컬렉션으로 만드는 헬퍼 */
-const docCollection = (dir: string) =>
-  defineCollection({
-    loader: glob({ pattern: '**/*.md', base: `./src/content/${dir}` }),
-    schema: docSchema,
-  });
-
+/**
+ * 모든 문서는 src/content/docs/ 한 폴더에 둔다.
+ * 2026-10-28 업무 매뉴얼·기준 및 규정 구분을 없애고 하나로 합쳤다.
+ */
 export const collections = {
-  guide: docCollection('guide'),
-  welfare: docCollection('welfare'),
+  docs: defineCollection({
+    loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
+    schema: docSchema,
+  }),
 };

@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
 import { toIsoDate } from '../lib/format';
 import type { SearchDoc } from '../lib/search';
 
@@ -36,24 +35,17 @@ function toPlainText(markdown: string): string {
 export const GET: APIRoute = async () => {
   const docs: SearchDoc[] = [];
 
-  for (const category of CATEGORY_ORDER) {
-    const entries = await getCollection(category);
+  for (const entry of await getCollection('docs')) {
+    if (entry.data.noSearch) continue;
 
-    for (const entry of entries) {
-      if (entry.data.noSearch) continue;
-
-      docs.push({
-        url: `/${category}/${entry.id}/`,
-        title: entry.data.title,
-        summary: entry.data.summary,
-        tags: entry.data.tags,
-        category,
-        categoryLabel: CATEGORIES[category].label,
-        categoryIcon: CATEGORIES[category].icon,
-        updated: toIsoDate(entry.data.updated),
-        body: toPlainText(entry.body ?? '').slice(0, BODY_LIMIT),
-      });
-    }
+    docs.push({
+      url: `/${entry.id}/`,
+      title: entry.data.title,
+      summary: entry.data.summary,
+      tags: entry.data.tags,
+      updated: toIsoDate(entry.data.updated),
+      body: toPlainText(entry.body ?? '').slice(0, BODY_LIMIT),
+    });
   }
 
   return new Response(JSON.stringify(docs), {

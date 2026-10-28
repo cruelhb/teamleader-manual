@@ -2,17 +2,11 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DocCard from '../components/DocCard.astro';
-import Icon from '../components/Icon.astro';
 import site from '../data/site.json';
-import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories';
 import { sortDocs } from '../lib/docs';
 
-// 홈은 모든 문서를 카테고리별 카드로 보여준다. 정렬은 각 카테고리 목록과 같다.
-const groups = await Promise.all(CATEGORY_ORDER.map(async (key) => ({
-  key,
-  ...CATEGORIES[key],
-  docs: sortDocs(await getCollection(key), CATEGORIES[key].sort),
-})));
+// 홈은 모든 문서를 카드 한 묶음으로 보여준다. 순서는 왼쪽 메뉴와 같다.
+const docs = sortDocs(await getCollection('docs'));
 ---
 
 <BaseLayout>
@@ -21,32 +15,27 @@ const groups = await Promise.all(CATEGORY_ORDER.map(async (key) => ({
     <p class="hero__tagline">{site.tagline}</p>
   </section>
 
-  {groups.map((group) => (
-    <section class="section" aria-labelledby={`home-${group.key}`}>
-      <h2 class="section__title" id={`home-${group.key}`}>
-        <span class="section__heading">
-          <Icon name={group.icon} size={19} />
-          {group.label}
-        </span>
-        <span class="section__count">{group.docs.length}건</span>
-      </h2>
-      {
-        group.docs.length > 0 ? (
-          <ul class="card-list card-list--grid">
-            {group.docs.map((doc) => (
-              <DocCard
-                url={`/${group.key}/${doc.id}/`}
-                title={doc.data.title}
-                summary={doc.data.summary}
-                updated={doc.data.updated}
-                pinned={doc.data.pinned}
-              />
-            ))}
-          </ul>
-        ) : (
-          <p class="empty">아직 등록된 내용이 없습니다.</p>
-        )
-      }
-    </section>
-  ))}
+  <section class="section" aria-labelledby="home-docs">
+    <h2 class="section__title" id="home-docs">
+      전체 문서
+      <span class="section__count">{docs.length}건</span>
+    </h2>
+    {
+      docs.length > 0 ? (
+        <ul class="card-list card-list--grid">
+          {docs.map((doc) => (
+            <DocCard
+              url={`/${doc.id}/`}
+              title={doc.data.title}
+              summary={doc.data.summary}
+              updated={doc.data.updated}
+              pinned={doc.data.pinned}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p class="empty">아직 등록된 내용이 없습니다.</p>
+      )
+    }
+  </section>
 </BaseLayout>

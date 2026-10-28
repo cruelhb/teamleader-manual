@@ -2,13 +2,11 @@
 import BaseLayout from './BaseLayout.astro';
 import ShareButton from '../components/ShareButton.astro';
 import Icon from '../components/Icon.astro';
-import { CATEGORIES, type CategoryKey } from '../lib/categories';
 import { formatDate } from '../lib/format';
 import { bodyIconCss } from '../lib/icons';
 import DocTools from '../components/DocTools.astro';
 
 interface Props {
-  category: CategoryKey;
   title: string;
   summary: string;
   updated: Date | string;
@@ -18,11 +16,10 @@ interface Props {
   relatedDocs?: Array<{ url: string; title: string; summary: string }>;
 }
 
-const { category, title, summary, updated, source, file, quickSummary, relatedDocs = [] } = Astro.props;
+const { title, summary, updated, source, file, quickSummary, relatedDocs = [] } = Astro.props;
 const summaryRows = [
   ['대상', quickSummary?.audience], ['핵심 기준', quickSummary?.keyPoint], ['처리 방법', quickSummary?.action],
 ].filter(([, value]) => value);
-const categoryInfo = CATEGORIES[category];
 
 // 본문에서 <i class="ico ico--이름"></i> 로 쓰는 아이콘의 모양 정의.
 // 문서 페이지에서만 필요하므로 여기서만 심는다.
@@ -34,9 +31,9 @@ const iconCss = bodyIconCss();
 
   <article class="doc">
     <p class="doc__breadcrumb">
-      <a class="back-link" href={`/${category}/`}>
+      <a class="back-link" href="/">
         <Icon name="arrowLeft" size={17} />
-        {categoryInfo.label}
+        홈으로
       </a>
     </p>
 

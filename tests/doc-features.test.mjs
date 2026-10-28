@@ -5,20 +5,23 @@ import sectionIds from '../scripts/rehype-section-ids.mjs';
 
 const dist = (path) => new URL(`../dist/${path}`, import.meta.url);
 
-test('홈에 업무 매뉴얼·기준 및 규정의 모든 문서가 카드로 나온다', () => {
+test('홈에 모든 문서가 카드로 나오고 각 문서는 /문서-id/ 주소로 만들어진다', () => {
   const html = readFileSync(dist('index.html'), 'utf8');
-  for (const category of ['guide', 'welfare']) {
-    const ids = readdirSync(new URL(`../src/content/${category}/`, import.meta.url))
-      .filter((name) => name.endsWith('.md'))
-      .map((name) => name.slice(0, -3).toLowerCase());
-    assert.ok(ids.length > 0);
-    for (const id of ids) assert.ok(html.includes(`href="/${category}/${id}/"`), `${category}/${id} 카드 없음`);
+  const ids = readdirSync(new URL('../src/content/docs/', import.meta.url))
+    .filter((name) => name.endsWith('.md'))
+    .map((name) => name.slice(0, -3).toLowerCase());
+  assert.ok(ids.length > 0);
+  for (const id of ids) {
+    assert.ok(html.includes(`href="/${id}/"`), `${id} 카드 없음`);
+    assert.ok(existsSync(dist(`${id}/index.html`)), `${id} 페이지 없음`);
   }
 });
-test('공지사항 메뉴와 페이지가 남아 있지 않다', () => {
-  assert.equal(existsSync(dist('notice')), false);
+test('없앤 분류·공지 주소가 남지 않고 예전 주소는 넘겨주기 규칙이 있다', () => {
+  for (const old of ['notice', 'guide', 'welfare']) assert.equal(existsSync(dist(old)), false, `${old} 폴더가 남음`);
   const html = readFileSync(dist('index.html'), 'utf8') + readFileSync(dist('search-index.json'), 'utf8');
-  assert.doesNotMatch(html, /\/notice\/|공지사항/);
+  assert.doesNotMatch(html, /\/(notice|guide|welfare)\/|공지사항/);
+  const redirects = readFileSync(dist('_redirects'), 'utf8');
+  for (const old of ['guide', 'welfare']) assert.match(redirects, new RegExp(`^/${old}/\\* /:splat 301$`, 'm'));
 });
 test('접힌 항목 ID는 요약 힌트와 무관하고 기존 ID·중복 제목과 충돌하지 않는다', () => {
   const summary = (hint) => ({ type:'element', tagName:'summary', properties:{}, children:[
@@ -32,7 +35,7 @@ test('접힌 항목 ID는 요약 힌트와 무관하고 기존 ID·중복 제목
   assert.equal(second.properties.id,'section-신청-방법-3');
 });
 test('빌드한 경조사 HTML에 접힌 항목 링크와 요약이 포함된다', () => {
-  const html=readFileSync(new URL('../dist/welfare/경조사-안내/index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../dist/경조사-안내/index.html',import.meta.url),'utf8');
   assert.match(html, /id="section-신청-방법과-기한"/);
   assert.match(html, /핵심 요약/);
   const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);

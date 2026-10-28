@@ -1,5 +1,4 @@
 import { hasChoseongJamo, koreanIncludes, koreanStartsWith, normalize } from './hangul';
-import type { IconName } from './icons';
 
 /** /search-index.json 에 담기는 문서 하나의 형태 */
 export interface SearchDoc {
@@ -7,9 +6,6 @@ export interface SearchDoc {
   title: string;
   summary: string;
   tags: string[];
-  category: string;
-  categoryLabel: string;
-  categoryIcon: IconName;
   updated: string;
   /** 마크다운 문법을 걷어낸 본문 (앞부분만 — 자세한 내용은 tags 로 보강한다) */
   body: string;

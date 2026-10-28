@@ -1,0 +1,12 @@
+# Cloudflare Pages 주소 넘겨주기 규칙
+#
+# 2026-10-28 업무 매뉴얼(/guide/)·기준 및 규정(/welfare/) 구분을 없애고
+# 문서 주소를 /문서-id/ 로 줄였다. 카카오톡에 이미 공유된 예전 주소가
+# 새 주소로 자동으로 넘어가게 한다. 공지사항(/notice/)은 같은 날 삭제해 홈으로 보낸다.
+
+/guide/* /:splat 301
+/welfare/* /:splat 301
+/guide / 301
+/welfare / 301
+/notice/* / 301
+/notice / 301

@@ -1,6 +1,54 @@
-# 새 세션 인수인계 — 2026-10-02
+# Claude Code 작업 인계 — 2026-10-28
 
-## 최신 후속 작업 — 아이콘 디자인 정리
+## 바로 이어받기
+
+이 저장소를 Claude Code에서 열고 **HANDOFF.md → CLAUDE.md → CONTENT_GUIDE.md** 순서로 읽는다.
+`CLAUDE.md`는 지속적인 프로젝트 지침이고, 이 문서는 현재 작업 상태와 최근 변경을 설명한다.
+
+작업 폴더:
+`D:\Users\haesung\Desktop\업무\099. 업무외 개인\클로드코드\teamleader-manual`
+
+### 현재 상태 (2026-10-28 확인)
+
+- 브랜치: `main`. 최신 커밋은 "관리자 화면 삭제 및 Claude Code 요청 방식으로 안내 정리"다. 실제 번호는 `git log`로 확인한다.
+- 이 커밋에 관리자 화면 삭제와 인계 문서(HANDOFF·CLAUDE·README·CONTENT_GUIDE) 정리를 함께 담아 푸시했다.
+- 이전 배포 커밋 `f7d7c33`(아이콘 통일)까지의 레이아웃·문서 편의 기능·아이콘 개선은 배포 완료 상태다. 구현하다 중단한 작업은 없다.
+- Node `24.18.0`에서 `npm.cmd test` 통과. 관리자 화면이 빠져 HTML은 12개다. 로컬 개발 서버에서 `/admin/` 404, 홈·문서 200 확인.
+- PC·모바일 화면 상세 검증 기록은 **2026-10-02**의 결과다(이번 변경은 화면 디자인과 무관).
+- `.claude/settings.local.json`은 원래 있던 미추적 사용자 설정이다. 내용 확인·수정·커밋하지 않았다. 일괄 `git add .`에 넣지 말 것.
+
+### 새 세션 시작 순서
+
+1. `git status --short --branch`, `git log -5 --oneline`으로 실제 상태를 확인한다. 이 문서의 커밋 번호는 작성 시점 기준이다.
+2. 필요하면 `git fetch origin` 후 `git rev-list --left-right --count HEAD...origin/main`으로 원격 차이를 확인한다. 다른 PC나 GitHub 웹에서 고친 내용이 있을 수 있으므로 로컬 변경을 보존하며 반영한다.
+3. 사용자에게 받은 다음 요청을 진행한다. 별도 새 요청이 없으면 기존 구현을 다시 만들거나 기능을 임의로 추가하지 않는다.
+4. UI를 변경했다면 빌드·테스트와 PC/모바일 확인을 진행한다. 본문이나 규정을 바꾸면 요약·검색 태그·관련 문서도 함께 확인한다.
+5. 커밋·배포가 요청된 작업은 한국어 커밋 → `git push origin main` → Cloudflare 배포 성공 → 운영 화면 확인까지 진행한다.
+
+### Claude Code에 붙여 넣을 시작 문구
+
+```text
+이 폴더의 HANDOFF.md, CLAUDE.md, CONTENT_GUIDE.md를 순서대로 읽고 현재 상태를 파악해줘.
+먼저 git 상태와 최근 커밋을 확인하고 기존 로컬 변경을 보존해줘.
+레이아웃·문서 기능·아이콘 개선은 이미 배포됐으니 그 상태에서 다음 요청을 이어서 진행해줘.
+.claude/settings.local.json은 개인 설정이므로 수정하거나 커밋하지 마.
+```
+
+이후 사용자가 원하는 변경 내용을 덧붙이면 된다.
+
+## 최신 작업 — 관리자 화면 삭제 (2026-10-28)
+
+- 사용자가 관리자 화면(`/admin`, Sveltia CMS)이 사이트와 따로 떨어져 있어 불편하다고 했다.
+  글 찾아 들어가기, 화면 모양 차이, 사이트와 오가기, 로그인·폰 사용 모두 불편한 점으로 골랐다.
+- 개선안(사이트 안 관리자 모드, 자체 편집기, 다른 CMS 교체)은 고르지 않았다. 대신 **문서 등록·수정은 Claude Code에 요청해서 반영**하기로 했다.
+  사용자가 직접 관리자 화면을 없애라고 했다.
+- 삭제: `src/pages/admin/index.astro`, `public/admin/config.yml`.
+- 정리: README·CONTENT_GUIDE의 관리자 화면 안내를 "Claude Code에 요청하기"로 바꿨다. CONTENT_GUIDE의 옛 12장은 2장에 합쳤고 옛 13장은 12장이 됐다.
+  CLAUDE.md에는 결정사항 5번 9항을 추가했다.
+- 유지: `src/content.config.ts`의 `null` 흡수 처리. 예전 CMS로 저장한 글이 남아 있기 때문이다.
+- 사이트 밖에 남은 것: Cloudflare Workers 로그인 중계 서버 `sveltia-cms-auth`와 GitHub OAuth App이 사용자 계정에 남아 있다. 사이트와 연결은 끊겼다. 지울지는 사용자가 정한다.
+
+## 이전 후속 작업 — 아이콘 디자인 정리
 
 - 사용자가 사이트 전체 아이콘 디자인 개선을 요청했다.
 - `src/lib/icons.ts`의 도형을 24px 격자·1.75 선 굵기로 통일했다. UI와 본문 mask가 같은 도형·굵기를 쓴다.
@@ -8,23 +56,26 @@
 - 기존 본문의 `ico--이름`은 유지하고 모양만 갱신했다. 홈 카드의 파란 아이콘 배경을 없애고 차분한 회청색으로 조정했다.
 - 닫기·메뉴·뒤로가기·전체 보기·펼침 표시·문서 공유 버튼도 같은 아이콘 체계를 사용한다.
 - `npm test` 4개 통과. PC 1360px·모바일 390px에서 확인. 목차 이동·항목 자동 펼침·검색어 지우기 정상, 모바일 가로 넘침 없음.
-- 변경은 검증 후 main에 커밋·푸시한다. 최신 커밋과 배포 검사 결과는 git 이력과 GitHub의 Cloudflare Pages 검사를 참고한다.
+- `f7d7c33`으로 커밋·푸시했고 Cloudflare 배포 성공 및 운영 아이콘 반영을 확인했다(2026-10-02). 오늘 배포 검사 성공 상태도 다시 조회했다.
 
 ## 먼저 읽을 것
 
-이 문서는 2026-10-02 Codex 세션의 최신 상태다. **이 문서 → CLAUDE.md → CONTENT_GUIDE.md** 순서로 읽는다.
-현재 실제 문서는 **8건**이며 CMS 설정에는 GitHub OAuth 중계 서버 `backend.base_url`이 이미 있다.
-후속 세션에서 README·CONTENT_GUIDE의 오래된 로그인 안내와 CLAUDE.md의 콘텐츠 수를 정정했다.
-로그인을 실제로 검증한 것은 아니다.
+아래는 2026-10-02에 구현·배포한 내용의 상세 인계다. 현재 상태는 위의 **2026-10-28 확인**을 우선한다.
+현재 실제 문서는 **8건**이다. 아래 내용 중 관리자 화면(CMS) 관련 부분은 2026-10-28 삭제로 더 이상 해당하지 않는다.
 
-**커밋·푸시·운영 배포 완료.** 기능 커밋 `06fd0bd`의 Cloudflare Pages 배포 성공과 운영 사이트 반영을 확인했다.
-작업 시작 기준: `f7c82ef` — 뒤로가기를 알약 모양 버튼으로 바꿔 눈에 띄게 함.
-최종 커밋·원격 동기화 상태는 `git log`와 `git status`로 확인한다. 사용자 로컬 설정은 커밋하지 않는다.
+최근 커밋은 다음과 같다.
+
+| 커밋 | 내용 |
+| --- | --- |
+| `f7d7c33` | 전체 아이콘을 간결한 선 디자인으로 통일 |
+| `73eb3ff` | 운영 배포 완료 및 검증 결과 인수인계 기록 |
+| `06fd0bd` | 문서 탐색 화면 개편 및 요약·항목 공유·공지 종료 기능 추가 |
+| `f7c82ef` | 뒤로가기를 알약 모양 버튼으로 변경 |
 
 ## 프로젝트와 사용자 의도
 
 - 서면심사본부 직원이 휴대폰에서 공통 규정·공지·매뉴얼을 찾고 카카오톡으로 링크를 공유하는 사이트.
-- Astro 5 정적 사이트 + Markdown 콘텐츠 + Sveltia CMS. 업무용 서버·DB 없음.
+- Astro 5 정적 사이트 + Markdown 콘텐츠. 글 수정은 Claude Code가 파일을 직접 고친다. 업무용 서버·DB 없음.
 - 운영 주소: https://teamleader-manual.pages.dev
 - 저장소: https://github.com/cruelhb/teamleader-manual
 - `main` 푸시 시 Cloudflare Pages 자동 배포. 후속 세션에서 GitHub의 Cloudflare Pages 검사 성공과 운영 사이트 반영을 확인했다.
@@ -78,7 +129,7 @@
 #### 공지 종료·보관
 
 - `noticeStatus`: `active`(기본), `closed`, `archived`.
-- `endsOn`: 선택 입력, 실제 유효한 `YYYY-MM-DD` 문자열. 빈 값/null 허용.
+- `endsOn`: 선택 입력, 실제 유효한 `YYYY-MM-DD` 문자열. 필드 생략/null 허용. 빈 문자열 `''`은 현재 스키마에서 허용하지 않는다.
 - 종료일 **당일까지 유효**, 한국 시간 다음 날 0시부터 종료.
 - 수동 종료·보관 상태는 종료일보다 우선한다.
 - 종료·보관 공지는 홈 최신 공지에서 제외하지만 목록·검색·메뉴·본문에서 상태 표시와 함께 유지.
@@ -97,19 +148,19 @@
 - 채용요청서 ↔ OJT, 무급휴가 ↔ 결근 처리의 양방향 연결 추가.
 - 관계가 명확하지 않은 다른 문서에 억지로 링크를 추가하지 않았다.
 
-## 관리 화면과 문서
+## 문서
 
-- `public/admin/config.yml`: 세 컬렉션에 핵심 요약·관련 문서 입력칸 추가.
-- 공지 컬렉션에만 상태·종료일 입력칸 추가.
-- 관련 문서는 현재 경로 직접 입력 방식이며 문서 선택 드롭다운은 아니다.
-- `CONTENT_GUIDE.md` 13장에 새 기능 사용법과 한계 기록.
+- `CONTENT_GUIDE.md` 12장(당시 13장)에 새 기능 사용법과 한계 기록.
 - `CLAUDE.md` 5번 디자인 정책과 10장에 최신 구현 반영.
-- CMS 설정은 YAML 파싱과 빌드로 확인했다. 실제 관리자 로그인/저장까지는 검증하지 않았다.
+- 당시 관리자 화면 설정에 입력칸을 추가했지만 그 화면은 2026-10-28 삭제했다.
 
 ## 구현 파일 지도
 
 | 파일 | 역할 |
 | --- | --- |
+| `src/lib/icons.ts`, `src/components/Icon.astro` | 공통 아이콘 도형·1.75 선 굵기, 본문 mask, 책 모양 파비콘 |
+| `src/lib/categories.ts` | 메뉴 이름·설명·정렬·카테고리 아이콘 연결 |
+| `src/data/site.json`, `src/data/shortcuts.json` | 사이트 이름·설명 및 홈 바로가기 |
 | `src/layouts/BaseLayout.astro` | 공통 헤더·검색·좌측 메뉴·본문 틀 |
 | `src/components/DocNavigation.astro` (신규) | 자동 문서 목록, 모바일 펼침, 현재 문서·공지 상태 |
 | `src/components/SearchBox.astro` | 공통 검색 패널과 종료 공지 검색 표시 |
@@ -142,10 +193,28 @@
 PowerShell에서는 아래 환경 설정을 먼저 사용했다.
 
 ```powershell
+Set-Location -LiteralPath 'D:\Users\haesung\Desktop\업무\099. 업무외 개인\클로드코드\teamleader-manual'
 $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
 $env:ASTRO_TELEMETRY_DISABLED = '1'
+npm.cmd test
 npm.cmd run dev -- --host 127.0.0.1
 ```
+
+`npm.cmd run dev`는 계속 실행되는 서버다. 테스트가 끝난 다음 실행하며 종료할 때 Ctrl+C를 누른다.
+의존성 폴더가 없거나 lockfile 기준 재설치가 필요할 때만 `npm.cmd ci --no-audit --no-fund`를 실행한다.
+재설치 시 Rollup의 `.node` 파일에 `EPERM/unlink`가 뜨면 이 프로젝트의 개발/미리보기 서버가 파일을 사용 중인지 확인한다.
+다른 Node 프로세스까지 일괄 종료하지 말 것.
+
+빌드 결과 확인:
+
+```powershell
+npm.cmd run build
+npm.cmd run preview -- --host 127.0.0.1 --port 4321
+```
+
+배포 설정은 기존 기록상 Framework `Astro`, Build `npm run build`, Output `dist`, `NODE_VERSION=22`다.
+현재 Cloudflare 설정 화면을 새로 조회한 값은 아니다. GitHub main에 푸시하면 자동 배포된다.
+배포는 push 성공만으로 완료 처리하지 말고, 해당 커밋의 GitHub Cloudflare Pages 검사 성공과 운영 주소 반영을 확인한다.
 
 - 로컬: http://127.0.0.1:4321/
 - 후속 검증에서는 기존 개발 서버를 종료하고 `npm run preview -- --host 127.0.0.1 --port 4321`로 빌드 결과를 확인했다. 새 세션에서 서버 상태를 먼저 확인한다.
@@ -161,20 +230,24 @@ npm.cmd run dev -- --host 127.0.0.1
 - 종료 공지 홈 제외·검색 종료 표시·본문 종료 안내 확인.
 - 무급휴가 페이지의 요약 3개 항목·모바일 목차 접힘·관련 문서 경로 확인.
 
-브라우저 도구 팁: 이전 세션 탭 핸들은 유효하지 않을 수 있으므로 현재 탭을 확인한다.
-이번 도구 환경에서는 `tab.screenshot()`으로 저장한 이미지가 비정상인 경우가 있었고,
-`tab.getScreenshot()`의 반환값을 저장했을 때 정상 결과를 얻었다. 임시 viewport는 종료 전 reset 완료.
+브라우저 확인은 Claude Code 환경에서 실제 제공되는 도구를 사용한다. 이전 Codex 세션의 탭 핸들이나
+`cua_repl` API가 새 환경에도 있다고 가정하지 않는다. 개발 서버와 미리보기 서버도 살아 있다고 가정하지 않는다.
+확인 권장 항목: PC 1360px/모바일 390px, 초성 검색·방향키/Enter·Escape, 모바일 메뉴,
+표 가로 넘침, 목차·항목 주소 직접 접속·복사, 종료 공지 홈 제외·검색 표시, 이미지 확대·닫기.
 
 ## 주의사항과 다음 작업
 
-- 사용자가 요청한 구현은 완료됐다. 현재 미해결 빌드 오류나 실패 테스트는 없다.
+- 사용자가 요청한 구현은 완료됐다. 오늘 재실행한 빌드·자동 테스트에도 실패가 없다.
 - 다음에는 사용자의 새 요청에 따라 디자인·기능을 조정하면 된다. 임의로 기능을 더 늘릴 필요 없다.
 - 신규 컴포넌트·유틸리티·검사 파일을 포함한 변경 34개 파일을 `06fd0bd`로 커밋·푸시했다.
 - `.claude/settings.local.json`은 세션 시작 전부터 있던 미추적 사용자 설정이다. 내용 확인·수정·추가 커밋을 하지 않았다. 일괄 `git add .`에 섞이지 않게 주의.
 - `dist/`, `.astro/`, `node_modules/`는 빌드·개발 산출물이며 ignore 대상.
-- 문서의 표 카드 전환 700px 기준, 본문의 `<details>` 빈 줄, CMS raw 우선 설정을 유지한다.
+- 문서의 표 카드 전환 700px 기준, 본문의 `<details>` 빈 줄 규칙을 유지한다.
 - 레이아웃 CSS는 기존 규칙 뒤에 새 규칙을 추가한 부분이 있다. 후속 디자인 수정 시 최종 적용 규칙을 확인한다.
 - 후속 세션의 배포 검증 결과는 아래 배포 기록을 참고한다.
+- 사용자가 제외한 **규정 적용일 분리**와 **검색 동의어 확장**을 다시 추가하지 않는다.
+- FAQ·서식 메뉴, 팀별 연락처·조직도, 제보 창구, 접근 제한 정책은 CLAUDE.md의 결정사항을 따른다.
+- 관리자 화면은 삭제했다. 사용자가 다시 요청하기 전에는 편집 화면을 새로 만들자고 제안하지 않는다.
 
 ## 후속 세션 검증 (2026-10-02)
 
@@ -201,3 +274,6 @@ npm.cmd run dev -- --host 127.0.0.1
 
 - 레이아웃: `C:/Users/haesung/.codex/visualizations/2026/10/02/01a0fb1b-8642-7df0-bb4c-1cf2b8d81425/docs-layout.png`
 - 문서 개선: `C:/Users/haesung/.codex/visualizations/2026/10/02/01a0fb1b-8642-7df0-bb4c-1cf2b8d81425/document-improvements.png`
+- 최종 아이콘 디자인: `C:/Users/haesung/.codex/visualizations/2026/10/02/01a0fb59-cff9-7331-8eb8-de15686d982c/icons-refined.png`
+
+프로젝트를 다른 PC로 옮기면 위 외부 이미지 경로는 없을 수 있다. 기능 구현에는 필요하지 않다.

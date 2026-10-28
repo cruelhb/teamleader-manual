@@ -8,13 +8,9 @@
 | | 주소 |
 | --- | --- |
 | 🌐 사이트 | <https://teamleader-manual.pages.dev> |
-| ✏️ 글 등록·수정 | <https://teamleader-manual.pages.dev/admin/> |
 | 📦 저장소 | <https://github.com/cruelhb/teamleader-manual> |
 
 `main` 브랜치에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포합니다.
-
-관리자 화면의 **`Sign In with GitHub`** 는 설정된 Cloudflare Workers 인증 중계 서버를 사용합니다.
-액세스 토큰 로그인도 사용할 수 있습니다. 자세한 방법은 [CONTENT_GUIDE.md](CONTENT_GUIDE.md) 2장에 있습니다.
 
 ---
 
@@ -26,12 +22,7 @@
 npm run dev
 ```
 
-그 다음 브라우저에서 아래 주소를 엽니다.
-
-| 주소 | 용도 |
-| --- | --- |
-| <http://localhost:4321> | 사이트 보기 |
-| <http://localhost:4321/admin/> | 글 등록·수정 화면 |
+그 다음 브라우저에서 <http://localhost:4321> 을 엽니다.
 
 > ⚠️ `localhost` 는 **내 컴퓨터 안에서만** 열리는 주소입니다.
 > 터미널을 닫거나 PC를 끄면 안 열리고, 폰이나 팀원 PC에서도 볼 수 없습니다.
@@ -48,9 +39,10 @@ npm run dev
 
 두 가지 방법이 있습니다.
 
-1. **관리자 화면** — `/admin/` 접속 → `Work with Local Repository` → 프로젝트 폴더 선택
-   (크롬·엣지에서만 됩니다)
+1. **Claude Code 에 요청** — 바꿀 내용을 말로 전하면 파일 수정부터 배포 확인까지 대신 합니다. (평소 방식)
 2. **파일 직접 편집** — `src/content/` 폴더의 `.md` 파일
+
+별도의 관리자 화면(`/admin`)은 쓰지 않아서 2026-10-28에 없앴습니다.
 
 ---
 
@@ -71,9 +63,6 @@ src/lib/
 
 public/
   img/             본문에 넣는 스크린샷
-
-public/admin/
-  config.yml       관리자 화면 입력칸 설정
 ```
 
 나머지 폴더(`src/pages`, `src/lib`, `src/layouts`, `src/components`, `src/styles`)는

@@ -2,8 +2,8 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 /**
- * 관리자 화면(CMS)은 비워둔 항목을 생략하지 않고 `null` 로 써넣는 경우가 있다.
- * 그대로 두면 빌드가 실패하므로 null 을 "값 없음"으로 받아준다.
+ * 예전 관리자 화면(CMS, 2026-10-28 삭제)은 비워둔 항목을 생략하지 않고 `null` 로 써넣었다.
+ * 그때 저장한 글이 남아 있고 그대로 두면 빌드가 실패하므로 null 을 "값 없음"으로 받아준다.
  */
 const optionalString = z
   .string()

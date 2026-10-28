@@ -1,7 +1,8 @@
 # 프로젝트 인수인계 문서
 
-> **새 세션은 [HANDOFF.md](HANDOFF.md)를 먼저 읽는다.** 2026-10-02 레이아웃·문서 기능 개선과
-> 작업·검증·배포 상태를 정리한 최신 인수인계다. 이 파일의 초기 현황보다 HANDOFF.md와 실제 코드를 우선한다.
+> **Claude Code의 새 세션은 [HANDOFF.md](HANDOFF.md)를 먼저 읽는다.** 2026-10-28 기준
+> 최근 커밋·배포 상태, 실행 방법, 완료 기능과 다음 작업의 시작 순서를 정리했다.
+> HANDOFF.md → 이 파일 → CONTENT_GUIDE.md 순서로 읽고, 실제 코드와 Git 상태도 확인한다.
 
 이 파일은 새 세션에서 작업을 이어받기 위한 문서다. 사용자 대상 문서는
 [README.md](README.md)(실행 방법)와 [CONTENT_GUIDE.md](CONTENT_GUIDE.md)(글 작성법)에 따로 있다.
@@ -34,7 +35,6 @@
 | | 주소 |
 | --- | --- |
 | 사이트 | <https://teamleader-manual.pages.dev> |
-| 관리자 화면 | <https://teamleader-manual.pages.dev/admin/> |
 | 저장소 (**공개**) | <https://github.com/cruelhb/teamleader-manual> |
 
 `main` 에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포한다.
@@ -47,7 +47,7 @@
 - `welfare/경조사-안내.md` — 경조휴가 + 경조사비 통합. 대분류 펼침 방식
 - `guide/OJT-프로세스-및-진행방법.md` — 10단계 절차 도식(`.steps`) + 평가 배점·합불 기준
 - `guide/팀별-잔여-회식비-조회.md` — 조회 사이트 링크 + 조직관리비 지급 기준
-- `notice/이패스손사-얼리버드-강의-신청-안내.md` — 사용자가 CMS로 직접 작성
+- `notice/이패스손사-얼리버드-강의-신청-안내.md` — 사용자가 예전 관리자 화면(CMS)으로 직접 작성
 - `notice/사이트-오픈-안내.md` — 사이트 이용 안내
 - `guide/결근-및-임시결근-처리방법.md` — 결근 처리 절차
 - `guide/채용요청서-상신-방법.md` — 채용요청서 작성·상신 절차
@@ -59,18 +59,18 @@
   (`notice` 공지사항 / `guide` 업무 매뉴얼 / `welfare` 복지·인사 규정)
 - **검색**: 서버·DB 없이 빌드 시 `search-index.json` 생성 → 클라이언트에서 매칭.
   **한글 초성 검색 자체 구현** (`src/lib/hangul.ts`, `src/lib/search.ts`)
-- **관리자 화면**: Sveltia CMS (`src/pages/admin/index.astro` + `public/admin/config.yml`)
+- **글 수정**: 사용자가 내용을 주면 Claude Code 가 `.md` 파일을 직접 고친다.
+  관리자 화면(Sveltia CMS)은 2026-10-28 삭제했다(5번 9항).
 - **호스팅**: Cloudflare Pages (무료, 월 500회 빌드, 트래픽 무제한)
 
 ### 건드릴 일 있는 파일
 
 ```
 src/content/<카테고리>/*.md   글 (여기가 대부분의 작업)
-src/data/site.json             사이트 이름, 제보 링크
+src/data/site.json             사이트 이름·설명
 src/data/shortcuts.json        홈 "자주 찾는 항목" 타일
 src/lib/categories.ts          메뉴 이름·설명·정렬 방식
 src/lib/icons.ts               선 아이콘 모음 (SVG 도형)
-public/admin/config.yml        관리자 화면 입력칸
 scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트명 바꾸면 재실행)
 ```
 
@@ -80,8 +80,7 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
 
 0. **메뉴는 3개뿐이다** — 공지사항 / 업무 매뉴얼 / 복지·인사 규정.
    FAQ 와 서식·양식 메뉴는 사용자 요청으로 **삭제**했다(컬렉션·폴더·CMS 설정까지).
-   되살리자고 먼저 제안하지 말 것. `file`(내려받기) 필드와 DocLayout 의 버튼은
-   남겨뒀지만 CMS 입력칸은 없다.
+   되살리자고 먼저 제안하지 말 것. `file`(내려받기) 필드와 DocLayout 의 버튼은 남아 있다.
 1. **전사 공통 내용만 다룬다.** 팀(보험사)별로 다른 업무는 이 사이트에서 다루지 않는다.
    `teams` 필드·팀 필터 UI를 데이터 모델에서 **의도적으로 제거**했다.
 2. **팀별 연락처·조직도는 넣지 않는다.** 기존 모바일 인트라넷에 이미 있어 중복이다.
@@ -116,6 +115,14 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
    쓰고 색은 `currentColor` 를 따라간다. 새 아이콘이 필요하면 이모지를 넣지 말고
    `icons.ts` 에 도형을 추가할 것. 24px 격자·선 굵기 1.75를 공통으로 사용하며
    본문 mask와 UI의 선 굵기도 같다. 로고·파비콘은 같은 책 모양을 공유한다.
+9. **관리자 화면(`/admin`, Sveltia CMS)은 2026-10-28 삭제했다.** 사이트와 따로 떨어져
+   있어 글 찾기·화면 차이·오가기·로그인·폰 사용이 모두 불편하다고 했다. 사이트 안
+   관리자 모드나 자체 편집기 같은 개선안도 고르지 않았다. 대신 **문서 등록·수정은 Claude Code 에
+   요청해서 반영**하기로 했다. 관리자 화면이나 편집기를 다시 만들자고 먼저 제안하지 말 것.
+   사용자가 내용을 주면 파일 수정 → 요약·태그·관련 문서·수정일 확인 → `npm test` →
+   한국어 커밋·푸시 → Cloudflare 배포 성공·운영 화면 확인까지 진행한다.
+   삭제 시점에 Cloudflare Workers 의 로그인 중계 서버(`sveltia-cms-auth.onelight0913.workers.dev`)와
+   GitHub OAuth App 은 사용자 계정에 남아 있었다. 정리할지는 사용자가 정한다.
 
 ## 6. 주의사항 (실제로 문제가 됐던 것들)
 
@@ -142,9 +149,6 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
     태그가 글자 그대로 나온다. (`<details>` 와 정반대이니 주의)
 - **`<details>` 안의 마크다운은 빈 줄이 필수다.** `<summary>` 다음 줄과 `</details>`
   앞에 빈 줄이 없으면 표가 표로 렌더링되지 않고 글자 그대로 나온다.
-- **CMS 본문 편집은 `raw` 모드가 기본**이며 그대로 둬야 한다. `rich_text`(위지윅)로
-  바꾸면 `<details>` 구조가 깨진다. `config.yml` 에 `modes: [raw, rich_text]` 로
-  raw를 앞에 둔 이유다.
 - **검색 본문 색인 상한은 4000자**(`src/pages/search-index.json.ts`의 `BODY_LIMIT`).
   1000자였을 때 긴 문서 뒷부분이 검색에서 통째로 빠지는 문제가 있었다.
 - **초성 매칭은 제목·태그·요약에만** 적용한다. 본문까지 초성 매칭하면 `ㅇㅊ` 두 글자가
@@ -162,24 +166,17 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
   ```
 - `.claude/launch.json` 은 같은 이유로 `node.exe` **절대경로**를 쓴다.
   (`C:\Program Files\nodejs\node.exe` + `node_modules/astro/astro.js dev`)
-- **Astro 개발 서버는 `public/` 의 디렉터리 인덱스를 못 찾는다.** 그래서 관리자
-  화면을 `public/admin/index.html` 이 아니라 `src/pages/admin/index.astro` 에 뒀다.
-  (그래야 개발·배포 양쪽에서 `/admin/` 이 동작)
+- **Astro 개발 서버는 `public/` 의 디렉터리 인덱스를 못 찾는다.** 폴더 주소로 열릴
+  페이지가 필요하면 `public/<폴더>/index.html` 이 아니라 `src/pages/` 에 둔다.
+  (예전 관리자 화면도 이 이유로 `src/pages/admin/index.astro` 에 있었다)
 - 커밋은 그냥 `git commit` 을 쓰면 된다. 전역 설정이 GitHub **noreply 이메일**로
   되어 있고, 공개 저장소라 실제 이메일이 노출되면 안 된다. `-c user.email` 로
   덮어쓰지 말 것.
 
-### 관리자 화면
+### 예전 관리자 화면의 흔적
 
-- **`Sign In with GitHub` 은 OAuth 중계 서버를 거친다.** 기본값으로는 Sveltia CMS가
-  Netlify 인증 서버를 호출해 `api.netlify.com ... Not Found` 가 떴다. 그래서
-  Cloudflare Workers에 `sveltia-cms-auth` 를 배포하고 `config.yml` 의 `backend.base_url`
-  에 `https://sveltia-cms-auth.onelight0913.workers.dev` 를 넣어 해결했다.
-  워커 쪽에 `GITHUB_CLIENT_ID`·`GITHUB_CLIENT_SECRET`·`ALLOWED_DOMAINS` 환경변수가
-  들어 있고, GitHub OAuth App의 callback 은 `<워커주소>/callback` 이다.
-  **`base_url` 을 지우면 로그인이 다시 깨진다.**
-- **CMS가 빈 항목을 `null` 로 저장한다.** `src/content.config.ts` 의 스키마가
-  `nullish().transform()` 으로 이를 흡수하고 있으니 건드리지 말 것.
+- **예전 CMS가 빈 항목을 `null` 로 저장했다.** 그때 저장한 글이 남아 있으므로
+  `src/content.config.ts` 스키마의 `nullish().transform()` 은 관리자 화면을 지운 뒤에도 유지한다.
 
 ## 7. 검증 방법
 
@@ -190,10 +187,10 @@ npm run dev            # http://localhost:4321
 npm run build          # 배포 전 확인. frontmatter 누락 시 실패해야 정상
 ```
 
-`preview_start` 로 로컬(`localhost:4321`) 또는 배포 사이트를 열고,
-`javascript_tool` 로 검색·표·펼침 목록·OG 태그를 점검해 왔다.
-`computer{action:"screenshot"}` 은 브라우저 창이 표시돼 있지 않으면 실패하므로,
-`read_page` 와 `javascript_tool` 위주로 검증하는 편이 낫다.
+현재 Claude Code 환경에 제공되는 브라우저 도구로 로컬 또는 운영 사이트를 확인한다.
+이전 세션의 브라우저 핸들·도구 이름을 그대로 사용할 수 있다고 가정하지 않는다.
+`npm.cmd test`는 빌드와 자동 검사 4개를 실행한다(Node 22.6 이상).
+UI 변경 시 PC 1360px·모바일 390px에서 메뉴·검색·표·목차·항목 링크·아이콘을 직접 확인한다.
 
 검색 회귀 테스트에 써온 검색어: `ㄱㅈㅅ`(경조사) `ㅎㅅㅂ`(회식비) `부고` `청첩장`
 `재혼` `OJT` `마이페이지` `증빙`
@@ -208,7 +205,8 @@ npm run build          # 배포 전 확인. frontmatter 누락 시 실패해야 
 초기 구축 → 경조사 규정 실제 내용 반영 → 경조사 문서 3건을 대분류 펼침 방식
 단일 문서로 통합 → 관리자 화면(Sveltia CMS) 추가 → 사이트명·메뉴명 변경 및
 상단 메뉴바 제거 → 경조사 표에서 가·나·다 구분 제거하고 직원지급분 있음/없음 표기 →
-GitHub 공개 저장소 푸시 → Cloudflare Pages 배포 완료.
+GitHub 공개 저장소 푸시 → Cloudflare Pages 배포 완료 → (2026-10-02) 문서 사이트형
+레이아웃·문서 편의 기능·선 아이콘 → (2026-10-28) 관리자 화면 삭제.
 
 `git log` 에 한국어 커밋 메시지로 남아 있으니 필요하면 참고할 것.
 

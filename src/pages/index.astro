@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DocCard from '../components/DocCard.astro';
 import site from '../data/site.json';
 import { sortDocs } from '../lib/docs';
+import type { IconName } from '../lib/icons';
 
 // 홈은 모든 문서를 카드 한 묶음으로 보여준다. 순서는 왼쪽 메뉴와 같다.
 const docs = sortDocs(await getCollection('docs'));
@@ -11,8 +12,9 @@ const docs = sortDocs(await getCollection('docs'));
 
 <BaseLayout>
   <section class="hero">
-    <h1 class="hero__title">{site.name}</h1>
-    <p class="hero__tagline">{site.tagline}</p>
+    <p class="hero__eyebrow">{site.name}</p>
+    <h1 class="hero__title">무엇이 궁금하세요?</h1>
+    <p class="hero__tagline">위 검색창에 단어나 초성을 입력하거나, 아래 문서를 눌러 보세요.</p>
   </section>
 
   <section class="section" aria-labelledby="home-docs">
@@ -30,6 +32,7 @@ const docs = sortDocs(await getCollection('docs'));
               summary={doc.data.summary}
               updated={doc.data.updated}
               pinned={doc.data.pinned}
+              icon={doc.data.icon as IconName}
             />
           ))}
         </ul>

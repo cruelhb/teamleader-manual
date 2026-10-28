@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { isIconName } from './lib/icons';
 
 /**
  * 예전 관리자 화면(CMS, 2026-10-28 삭제)은 비워둔 항목을 생략하지 않고 `null` 로 써넣었다.
@@ -55,6 +56,11 @@ const docSchema = z.object({
     .boolean()
     .nullish()
     .transform((value) => value ?? false),
+
+  /** 홈 카드·문서 제목 옆에 보이는 아이콘 이름 (src/lib/icons.ts). 없으면 체크 목록(guide). */
+  icon: z.string()
+    .refine(isIconName, '없는 아이콘 이름입니다. src/lib/icons.ts 의 이름을 쓰세요.')
+    .nullish().transform((value) => value ?? 'guide'),
 
   /** 목록 정렬 순서. 작을수록 위. 없으면 수정일 최신순. */
   order: optionalNumber,

@@ -1,5 +1,7 @@
 ---
+import Icon from './Icon.astro';
 import { formatDate } from '../lib/format';
+import type { IconName } from '../lib/icons';
 
 interface Props {
   url: string;
@@ -7,22 +9,22 @@ interface Props {
   summary: string;
   updated: Date | string;
   pinned?: boolean;
+  /** 문서 frontmatter 의 icon. 왼쪽 파란 상자 안에 표시한다. */
+  icon?: IconName;
 }
 
-const { url, title, summary, updated, pinned = false } = Astro.props;
+const { url, title, summary, updated, pinned = false, icon = 'guide' } = Astro.props;
 ---
 
 <li>
   <a class="card" href={url}>
-    {
-      pinned && (
-        <div class="card__top">
-          <span class="badge badge--pinned">중요</span>
-        </div>
-      )
-    }
-    <h3 class="card__title">{title}</h3>
-    <p class="card__summary">{summary}</p>
-    <span class="meta">{formatDate(updated)} 기준</span>
+    <span class="card__icon"><Icon name={icon} size={22} /></span>
+    <div class="card__body">
+      {pinned && <div class="card__top"><span class="badge badge--pinned">중요</span></div>}
+      <h3 class="card__title">{title}</h3>
+      <p class="card__summary">{summary}</p>
+      <span class="meta">{formatDate(updated)} 기준</span>
+    </div>
+    <Icon name="chevronRight" size={20} class="icon card__chevron" />
   </a>
 </li>

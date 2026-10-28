@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import DocLayout from '../layouts/DocLayout.astro';
+import type { IconName } from '../lib/icons';
 
 // 문서 하나 = 주소 하나. 주소는 /문서-id/ 로 짧게 둔다 (카카오톡 공유용).
 export async function getStaticPaths() {
@@ -27,6 +28,7 @@ const relatedDocs = [...new Set(entry.data.relatedDocs as string[])].map((url) =
   file={entry.data.file}
   quickSummary={entry.data.quickSummary}
   relatedDocs={relatedDocs}
+  icon={entry.data.icon as IconName}
 >
   <Content />
 </DocLayout>

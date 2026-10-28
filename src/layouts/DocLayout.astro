@@ -3,7 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import ShareButton from '../components/ShareButton.astro';
 import Icon from '../components/Icon.astro';
 import { formatDate } from '../lib/format';
-import { bodyIconCss } from '../lib/icons';
+import { bodyIconCss, type IconName } from '../lib/icons';
 import DocTools from '../components/DocTools.astro';
 
 interface Props {
@@ -14,9 +14,11 @@ interface Props {
   file?: string;
   quickSummary?: { audience?: string; keyPoint?: string; action?: string } | null;
   relatedDocs?: Array<{ url: string; title: string; summary: string }>;
+  /** 제목 왼쪽 아이콘. 홈 카드와 같은 것 */
+  icon?: IconName;
 }
 
-const { title, summary, updated, source, file, quickSummary, relatedDocs = [] } = Astro.props;
+const { title, summary, updated, source, file, quickSummary, relatedDocs = [], icon = 'guide' } = Astro.props;
 const summaryRows = [
   ['대상', quickSummary?.audience], ['핵심 기준', quickSummary?.keyPoint], ['처리 방법', quickSummary?.action],
 ].filter(([, value]) => value);
@@ -37,12 +39,17 @@ const iconCss = bodyIconCss();
       </a>
     </p>
 
-    <h1 class="doc__title">{title}</h1>
-
-    <div class="doc__meta">
-      <span><strong>최종 수정일</strong> {formatDate(updated)}</span>
-      {source && <span><strong>근거</strong> {source}</span>}
-    </div>
+    {/* 제목 · 핵심 요약 · 목차 · 본문 · 관련 문서를 각각 둥근 카드로 쌓는다 */}
+    <header class="doc-panel">
+      <div class="doc__heading">
+        <span class="doc__icon"><Icon name={icon} size={24} /></span>
+        <h1 class="doc__title">{title}</h1>
+      </div>
+      <div class="doc__meta">
+        <span><strong>최종 수정일</strong>{formatDate(updated)}</span>
+        {source && <span><strong>근거</strong>{source}</span>}
+      </div>
+    </header>
 
     {summaryRows.length > 0 && <section class="quick-summary" aria-labelledby="quick-summary-title">
       <h2 id="quick-summary-title">핵심 요약</h2>
@@ -50,22 +57,25 @@ const iconCss = bodyIconCss();
     </section>}
     <DocTools />
 
-    {
-      file && (
-        <p>
-          <a class="btn btn--primary" href={file} download>
-            <Icon name="download" size={18} /> 서식 내려받기
-          </a>
-        </p>
-      )
-    }
+    <div class="doc-panel">
+      {
+        file && (
+          <p>
+            <a class="btn btn--primary" href={file} download>
+              <Icon name="download" size={18} /> 서식 내려받기
+            </a>
+          </p>
+        )
+      }
 
-    <div class="prose" data-prose>
-      <slot />
+      <div class="prose" data-prose>
+        <slot />
+      </div>
+
+      <ShareButton />
     </div>
 
-    <ShareButton />
-    {relatedDocs.length > 0 && <section class="related-docs" aria-labelledby="related-docs-title">
+    {relatedDocs.length > 0 && <section class="doc-panel related-docs" aria-labelledby="related-docs-title">
       <h2 id="related-docs-title">함께 보면 좋은 문서</h2>
       <ul>{relatedDocs.map((doc) => <li><a href={doc.url}><strong>{doc.title}</strong><span>{doc.summary}</span></a></li>)}</ul>
     </section>}

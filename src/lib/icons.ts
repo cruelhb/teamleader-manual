@@ -28,12 +28,14 @@ export const ICON_PATHS = {
   won: '<path d="M20 8H5a2 2 0 0 1 0-4h13v4M3 6v12a2 2 0 0 0 2 2h15V8"/><path d="M20 12h-4a2 2 0 0 0 0 4h4M16 14h.01"/>',
   minus: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   home: '<path d="m3 10 9-7 9 7M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M9 21v-8h6v8"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   close: '<path d="m6 6 12 12M6 18 18 6"/>',
   arrowLeft: '<path d="M20 12H4m6-6-6 6 6 6"/>',
   arrowRight: '<path d="M4 12h16m-6-6 6 6-6 6"/>',
   chevronDown: '<path d="m6 9 6 6 6-6"/>',
+  chevronRight: '<path d="m9 6 6 6-6 6"/>',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;
@@ -60,6 +62,6 @@ export function bodyIconCss(): string {
 
 /** 헤더와 같은 책 모양을 브라우저 탭에도 표시한다. */
 export function faviconDataUri(): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#1f5fa9"/><g transform="translate(4 4)" fill="none" stroke="white" stroke-width="${ICON_STROKE_WIDTH}" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS.logo}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#2563eb"/><g transform="translate(4 4)" fill="none" stroke="white" stroke-width="${ICON_STROKE_WIDTH}" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS.logo}</g></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }

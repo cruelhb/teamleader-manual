@@ -247,6 +247,10 @@ summary:focus-visible {
 /* ==========================================================================
    왼쪽 문서 메뉴 (DocNavigation.astro)
    회색 바탕에 그대로 두고, 지금 보는 문서만 흰 알약으로 띄운다.
+   위계가 한눈에 보이도록 세 단계를 서로 다르게 그린다.
+     1단계 홈       — 아이콘 + 진한 글자. 아래 구분선으로 묶음과 떼어 놓는다.
+     2단계 전체 문서 — 누를 수 없는 묶음 제목. 작고 흐리게, 알약 모양을 쓰지 않는다.
+     3단계 문서들    — 왼쪽 세로선 안으로 들여쓰고, 지금 문서에만 파란 막대를 붙인다.
    ========================================================================== */
 
 .doc-navigation__toggle {
@@ -257,51 +261,60 @@ summary:focus-visible {
   text-decoration: none;
 }
 
-.nav-home,
-.nav-group__label {
+/* 1단계 — 홈 */
+.nav-home {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
   border-radius: 12px;
   color: var(--text);
-}
-
-.nav-home {
   font-size: 0.92rem;
-  font-weight: 650;
+  font-weight: 700;
 }
 
-.nav-home .icon,
-.nav-group__label .icon {
+.nav-home .icon {
   color: var(--text-faint);
 }
 
+/* 2단계 — 묶음 제목 */
 .nav-group {
-  margin-top: 18px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
 .nav-group h2 {
-  margin: 0 0 4px;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 650;
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .nav-group__label {
-  padding-block: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 12px;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
 }
 
 .nav-group__count {
   margin-left: auto;
+  padding: 1px 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
   color: var(--text-faint);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
+/* 3단계 — 문서 목록. 세로선으로 묶음에 속한다는 것을 보인다. */
 .nav-group ul {
-  margin: 0;
-  padding: 0;
+  margin: 0 0 0 20px;
+  padding: 2px 0 2px 8px;
+  border-left: 1px solid var(--border-strong);
   list-style: none;
 }
 
@@ -310,11 +323,12 @@ summary:focus-visible {
 }
 
 .nav-group li a {
+  position: relative;
   display: block;
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 9px 12px;
+  border-radius: 10px;
   color: var(--text-muted);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   line-height: 1.5;
 }
 
@@ -332,6 +346,19 @@ summary:focus-visible {
 
 .doc-navigation a[aria-current='page'] .icon {
   color: var(--brand);
+}
+
+/* 지금 보는 문서는 왼쪽 세로선 위에 파란 막대를 겹쳐 둔다. */
+.nav-group li a[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -9px;
+  width: 2px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--brand);
+  transform: translateY(-50%);
 }
 
 .doc-navigation__note {

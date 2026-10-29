@@ -4,17 +4,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DocCard from '../components/DocCard.astro';
 import site from '../data/site.json';
 import { sortDocs } from '../lib/docs';
+import { formatDate } from '../lib/format';
 import type { IconName } from '../lib/icons';
 
 // 홈은 모든 문서를 카드 한 묶음으로 보여준다. 순서는 왼쪽 메뉴와 같다.
 const docs = sortDocs(await getCollection('docs'));
+// "언제 기준 안내인지"를 홈에서도 바로 알 수 있게 가장 최근 수정일을 보여준다.
+const latest = docs.reduce<Date | undefined>((max, doc) => (!max || doc.data.updated > max ? doc.data.updated : max), undefined);
 ---
 
 <BaseLayout>
+  {/* 큰 제목은 줄마다 차례로 떠오른다 (global.css 의 hero 애니메이션) */}
   <section class="hero">
     <p class="hero__eyebrow">{site.name}</p>
-    <h1 class="hero__title">무엇이 궁금하세요?</h1>
-    <p class="hero__tagline">위 검색창에 단어나 초성을 입력하거나, 아래 문서를 눌러 보세요.</p>
+    <h1 class="hero__title">
+      <span class="hero__line">무엇이</span>
+      <span class="hero__line hero__accent">궁금하세요?</span>
+    </h1>
+    <div class="hero__foot">
+      <p class="hero__tagline">위 검색창에 단어나 초성을 입력하거나,<br />아래 문서를 눌러 보세요.</p>
+      <ul class="hero__stats" aria-label="문서 현황">
+        <li><strong>{docs.length}</strong>개 문서</li>
+        {latest && <li>최근 수정 <strong>{formatDate(latest)}</strong></li>}
+      </ul>
+    </div>
   </section>
 
   <section class="section" aria-labelledby="home-docs">
@@ -24,7 +37,7 @@ const docs = sortDocs(await getCollection('docs'));
     </h2>
     {
       docs.length > 0 ? (
-        <ul class="card-list card-list--grid">
+        <ul class="card-list card-list--grid card-list--poster">
           {docs.map((doc) => (
             <DocCard
               url={`/${doc.id}/`}
@@ -33,6 +46,8 @@ const docs = sortDocs(await getCollection('docs'));
               updated={doc.data.updated}
               pinned={doc.data.pinned}
               icon={doc.data.icon as IconName}
+              tone={doc.data.tone}
+              cover={doc.data.cover}
             />
           ))}
         </ul>

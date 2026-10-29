@@ -29,6 +29,7 @@ const relatedDocs = [...new Set(entry.data.relatedDocs as string[])].map((url) =
   quickSummary={entry.data.quickSummary}
   relatedDocs={relatedDocs}
   icon={entry.data.icon as IconName}
+  tone={entry.data.tone}
 >
   <Content />
 </DocLayout>

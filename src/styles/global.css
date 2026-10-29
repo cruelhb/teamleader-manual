@@ -40,11 +40,15 @@
   --shadow-lift: 0 4px 10px rgba(25, 31, 40, 0.06), 0 12px 28px rgba(25, 31, 40, 0.08);
   --shadow-pop: 0 16px 48px rgba(25, 31, 40, 0.16);
 
+  /* 움직임 — 빠르게 출발해 부드럽게 멈추는 곡선 */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
   /* 레이아웃 */
   --header-height: 72px;
   --sidebar-width: 248px;
 
-  --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+  /* Pretendard 는 BaseLayout 이 CDN 에서 불러온다. 실패하면 뒤의 기기 글꼴로 보인다. */
+  --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
     'Malgun Gothic', '맑은 고딕', 'Segoe UI', system-ui, sans-serif;
 }
 
@@ -373,28 +377,86 @@ summary:focus-visible {
    홈
    ========================================================================== */
 
+/* 큰 제목 — efusioni.com 처럼 아주 크게 쓰고 한 줄에 강조색을 준다 */
 .hero {
-  padding: 4px 4px 8px;
+  padding: 8px 4px 12px;
 }
 
 .hero__eyebrow {
-  margin: 0 0 6px;
-  color: var(--brand);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  color: var(--text-muted);
   font-size: 0.85rem;
-  font-weight: 650;
+  font-weight: 600;
+}
+
+/* 제목 앞의 작은 파란 점 */
+.hero__eyebrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
 }
 
 .hero__title {
-  margin: 0 0 8px;
-  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
-  line-height: 1.35;
-  letter-spacing: -0.04em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.3em;
+  margin: 0;
+  font-size: clamp(2.3rem, 5.2vw, 4rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+
+.hero__line {
+  display: inline-block;
+}
+
+.hero__accent {
+  color: var(--brand);
+}
+
+.hero__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-top: 22px;
 }
 
 .hero__tagline {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero__stats li {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  box-shadow: var(--shadow);
+}
+
+.hero__stats strong {
+  color: var(--text);
+  font-weight: 700;
 }
 
 .section {
@@ -436,6 +498,7 @@ summary:focus-visible {
 }
 
 .card {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 14px;
@@ -445,7 +508,7 @@ summary:focus-visible {
   background: var(--surface);
   color: inherit;
   box-shadow: var(--shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
 }
 
 .card:hover {
@@ -459,15 +522,31 @@ summary:focus-visible {
   transform: scale(0.98);
 }
 
-.card__icon {
+/* 문서별 색 (frontmatter tone). 아이콘 상자와 PC 포스터 카드의 색 영역에 쓴다. */
+.tone-blue   { --tone: #2563eb; --tone-soft: #ebf2ff; }
+.tone-rose   { --tone: #e11d48; --tone-soft: #ffe9ee; }
+.tone-green  { --tone: #16a34a; --tone-soft: #e6f7ec; }
+.tone-amber  { --tone: #d97706; --tone-soft: #fff3df; }
+.tone-violet { --tone: #7c3aed; --tone-soft: #f1ebff; }
+.tone-teal   { --tone: #0d9488; --tone-soft: #e1f5f2; }
+
+/* 카드 왼쪽 색 상자 (대표 이미지가 있으면 그 이미지) */
+.card__media {
   flex: none;
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
+  overflow: hidden;
   border-radius: 14px;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: var(--tone-soft, var(--brand-soft));
+  color: var(--tone, var(--brand));
+}
+
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .card__body {
@@ -515,6 +594,197 @@ summary:focus-visible {
 
 .card:hover .card__chevron {
   color: var(--brand);
+}
+
+/* --------------------------------------------------------------------------
+   PC 홈 포스터형 카드 (.card-list--poster, 1024px 이상)
+
+   efusioni.com 의 엇갈린 카드 배치를 참고했다. 3열로 놓고 가운데 열만
+   아래로 내려 리듬을 준다. 카드 위쪽은 문서 색으로 칠한 큰 영역에 큰 아이콘
+   (대표 이미지가 있으면 이미지)을 두고, 아래에 제목·요약을 둔다.
+   휴대폰은 한 화면에 여러 장 훑어볼 수 있게 위의 한 줄 카드를 그대로 쓴다.
+   가운데 열은 transform 으로만 내리므로 읽는 순서(1·2·3 / 4·5·6)는 바뀌지 않는다.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .card-list--poster {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    padding-bottom: 56px; /* 내려간 가운데 열이 아래 내용과 겹치지 않게 */
+  }
+
+  .card-list--poster > li:nth-child(3n + 2) {
+    transform: translateY(56px);
+  }
+
+  .card-list--poster .card {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* 색 영역: 문서 색 위에 오른쪽 위로 빛이 번지는 그라데이션 */
+  .card-list--poster .card__media {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    border-radius: 0;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.85), transparent 46%),
+      radial-gradient(circle at 12% 100%, color-mix(in srgb, var(--tone) 14%, transparent), transparent 55%),
+      var(--tone-soft);
+  }
+
+  /* 큰 아이콘은 앱 아이콘처럼 흰 둥근 사각형 위에 */
+  .card-list--poster .card__media .icon {
+    width: 92px;
+    height: 92px;
+    padding: 20px;
+    border-radius: 28px;
+    background: var(--surface);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--tone) 22%, transparent);
+    stroke-width: 1.5;
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .card-list--poster .card:hover .card__media .icon {
+    transform: translateY(-6px) rotate(-6deg) scale(1.06);
+  }
+
+  /* 대표 이미지는 마우스를 올리면 살짝 확대 (efusioni 와 같은 효과) */
+  .card-list--poster .card__media img {
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .card-list--poster .card:hover .card__media img {
+    transform: scale(1.06);
+  }
+
+  .card-list--poster .card__body {
+    padding: 22px 24px 24px;
+  }
+
+  .card-list--poster .card__title {
+    margin-bottom: 8px;
+    font-size: 1.18rem;
+    line-height: 1.4;
+  }
+
+  .card-list--poster .card__summary {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .card-list--poster .card__chevron {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   움직임 효과 (src/lib/motion.ts 와 짝)
+
+   모두 <html class="motion"> 일 때만 켜진다. 이 클래스는 스크립트가 켜져 있고
+   기기의 "동작 줄이기" 설정이 꺼져 있을 때만 붙으므로, 그 밖의 경우에는
+   카드와 글이 처음부터 그대로 보인다.
+   ========================================================================== */
+
+/* 1) 나타나기 — 화면에 들어오면 아래에서 떠오른다. 카드끼리는 조금씩 늦게.
+      transform 이 아닌 translate 를 써서 엇갈린 배치(transform)·기울이기와 겹치지 않게 했다. */
+.motion [data-reveal] {
+  opacity: 0;
+  translate: 0 28px;
+  transition:
+    opacity 0.7s var(--ease-out) var(--reveal-delay, 0ms),
+    translate 0.7s var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+.motion [data-reveal].is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 2) 큰 제목 — 처음 열 때 줄마다 차례로 떠오른다 */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 0.5em;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.motion .hero__eyebrow,
+.motion .hero__line,
+.motion .hero__foot {
+  animation: rise-in 0.9s var(--ease-out) both;
+}
+
+.motion .hero__line:nth-child(1) { animation-delay: 0.08s; }
+.motion .hero__line:nth-child(2) { animation-delay: 0.18s; }
+.motion .hero__foot { animation-delay: 0.3s; }
+
+/* 3) 기울이기 — PC에서 마우스를 따라 카드가 살짝 기울고 빛이 비친다 (--rx/--ry/--mx/--my 는 스크립트가 채움) */
+@media (hover: hover) and (pointer: fine) {
+  .motion .card-list--poster .card {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 0.5s var(--ease-out), box-shadow 0.35s var(--ease-out);
+    will-change: transform;
+  }
+
+  .motion .card-list--poster .card:hover {
+    /* 마우스를 따라갈 때는 빠르게 반응해야 끊겨 보이지 않는다 */
+    transition: transform 0.12s linear, box-shadow 0.35s var(--ease-out);
+  }
+
+  .motion .card-list--poster .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.35), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-out);
+    pointer-events: none;
+  }
+
+  .motion .card-list--poster .card:hover::after {
+    opacity: 1;
+  }
+}
+
+/* 인쇄할 때는 아직 나타나지 않은 카드도 모두 보이게 */
+@media print {
+  .motion [data-reveal] {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+/* 4) 검색 결과 창과 휴대폰 문서 메뉴는 열릴 때 살짝 커지며 나타난다 */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.motion .search-panel:not([hidden]) {
+  transform-origin: top center;
+  animation: pop-in 0.22s var(--ease-out);
+}
+
+@media (max-width: 1023px) {
+  .motion .doc-navigation[open] .doc-navigation__body {
+    transform-origin: top left;
+    animation: pop-in 0.22s var(--ease-out);
+  }
 }
 
 /* ==========================================================================
@@ -763,8 +1033,8 @@ summary:focus-visible {
   width: 48px;
   height: 48px;
   border-radius: 15px;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: var(--tone-soft, var(--brand-soft));
+  color: var(--tone, var(--brand));
 }
 
 .doc__title {
@@ -1743,11 +2013,15 @@ summary:focus-visible {
   }
 
   .hero__title {
-    font-size: 1.5rem;
+    font-size: 2.15rem;
   }
 
   .hero__tagline {
     font-size: 0.9rem;
+  }
+
+  .hero__foot {
+    margin-top: 16px;
   }
 
   .card-list {

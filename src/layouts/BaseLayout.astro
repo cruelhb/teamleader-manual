@@ -52,6 +52,17 @@ const favicon = faviconDataUri();
 
     <meta name="theme-color" content="#ffffff" />
 
+    {/* 본문 글꼴 Pretendard. 못 불러와도 기기 기본 글꼴(맑은 고딕 등)로 보인다. */}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
+    {/* 움직임 효과는 스크립트가 켜진 브라우저에서만, 기기의 "동작 줄이기" 설정이 꺼져 있을 때만 쓴다.
+        이 표시가 없으면 카드가 처음부터 그대로 보이므로 스크립트가 실패해도 내용이 숨지 않는다. */}
+    <script is:inline>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+    </script>
+
     {/* 페이지별로 <head> 에 더 넣을 것이 있으면 slot="head" 로 넘긴다
         (문서 페이지가 본문 아이콘 CSS 를 이렇게 넣는다) */}
     <slot name="head" />
@@ -82,5 +93,10 @@ const favicon = faviconDataUri();
         </footer>
       </div>
     </div>
+
+    <script>
+      import { initMotion } from '../lib/motion';
+      initMotion();
+    </script>
   </body>
 </html>

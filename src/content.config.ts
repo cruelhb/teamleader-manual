@@ -62,6 +62,14 @@ const docSchema = z.object({
     .refine(isIconName, '없는 아이콘 이름입니다. src/lib/icons.ts 의 이름을 쓰세요.')
     .nullish().transform((value) => value ?? 'guide'),
 
+  /** 카드·아이콘 색. global.css 의 .tone-이름 과 짝을 이룬다. 없으면 파랑. */
+  tone: z.enum(['blue', 'rose', 'green', 'amber', 'violet', 'teal']).nullish()
+    .transform((value) => value ?? 'blue'),
+
+  /** 카드 대표 이미지 (예: /img/covers/경조사.jpg). 있으면 색 상자 대신 이 이미지를 보여준다. */
+  cover: z.string().regex(/^\/img\/.+\.(png|jpe?g|webp)$/i, '/img/ 로 시작하는 png·jpg·webp 경로를 쓰세요.')
+    .nullish().transform((value) => value ?? undefined),
+
   /** 목록 정렬 순서. 작을수록 위. 없으면 수정일 최신순. */
   order: optionalNumber,
 

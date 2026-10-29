@@ -16,9 +16,11 @@ interface Props {
   relatedDocs?: Array<{ url: string; title: string; summary: string }>;
   /** 제목 왼쪽 아이콘. 홈 카드와 같은 것 */
   icon?: IconName;
+  /** 아이콘 상자 색. 홈 카드와 같은 것 */
+  tone?: string;
 }
 
-const { title, summary, updated, source, file, quickSummary, relatedDocs = [], icon = 'guide' } = Astro.props;
+const { title, summary, updated, source, file, quickSummary, relatedDocs = [], icon = 'guide', tone = 'blue' } = Astro.props;
 const summaryRows = [
   ['대상', quickSummary?.audience], ['핵심 기준', quickSummary?.keyPoint], ['처리 방법', quickSummary?.action],
 ].filter(([, value]) => value);
@@ -40,9 +42,9 @@ const iconCss = bodyIconCss();
     </p>
 
     {/* 제목 · 핵심 요약 · 목차 · 본문 · 관련 문서를 각각 둥근 카드로 쌓는다 */}
-    <header class="doc-panel">
+    <header class="doc-panel" data-reveal>
       <div class="doc__heading">
-        <span class="doc__icon"><Icon name={icon} size={24} /></span>
+        <span class={`doc__icon tone-${tone}`}><Icon name={icon} size={24} /></span>
         <h1 class="doc__title">{title}</h1>
       </div>
       <div class="doc__meta">
@@ -51,13 +53,13 @@ const iconCss = bodyIconCss();
       </div>
     </header>
 
-    {summaryRows.length > 0 && <section class="quick-summary" aria-labelledby="quick-summary-title">
+    {summaryRows.length > 0 && <section class="quick-summary" aria-labelledby="quick-summary-title" data-reveal>
       <h2 id="quick-summary-title">핵심 요약</h2>
       <dl>{summaryRows.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
     </section>}
     <DocTools />
 
-    <div class="doc-panel">
+    <div class="doc-panel" data-reveal>
       {
         file && (
           <p>
@@ -75,7 +77,7 @@ const iconCss = bodyIconCss();
       <ShareButton />
     </div>
 
-    {relatedDocs.length > 0 && <section class="doc-panel related-docs" aria-labelledby="related-docs-title">
+    {relatedDocs.length > 0 && <section class="doc-panel related-docs" aria-labelledby="related-docs-title" data-reveal>
       <h2 id="related-docs-title">함께 보면 좋은 문서</h2>
       <ul>{relatedDocs.map((doc) => <li><a href={doc.url}><strong>{doc.title}</strong><span>{doc.summary}</span></a></li>)}</ul>
     </section>}

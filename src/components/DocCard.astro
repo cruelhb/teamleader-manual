@@ -9,16 +9,24 @@ interface Props {
   summary: string;
   updated: Date | string;
   pinned?: boolean;
-  /** 문서 frontmatter 의 icon. 왼쪽 파란 상자 안에 표시한다. */
+  /** 문서 frontmatter 의 icon */
   icon?: IconName;
+  /** 문서 frontmatter 의 tone (카드 색) */
+  tone?: string;
+  /** 문서 frontmatter 의 cover (대표 이미지). 있으면 색 상자 대신 보여준다. */
+  cover?: string;
 }
 
-const { url, title, summary, updated, pinned = false, icon = 'guide' } = Astro.props;
+const { url, title, summary, updated, pinned = false, icon = 'guide', tone = 'blue', cover } = Astro.props;
 ---
 
-<li>
-  <a class="card" href={url}>
-    <span class="card__icon"><Icon name={icon} size={22} /></span>
+<li data-reveal>
+  {/* 폰에서는 왼쪽 작은 색 상자, PC 홈에서는 카드 위쪽의 큰 색 영역(포스터형)이 된다.
+      data-reveal·data-tilt 는 src/lib/motion.ts 의 나타나기·기울이기 효과 */}
+  <a class={`card tone-${tone}`} href={url} data-tilt>
+    <span class:list={['card__media', { 'card__media--cover': cover }]}>
+      {cover ? <img src={cover} alt="" loading="lazy" decoding="async" /> : <Icon name={icon} size={22} />}
+    </span>
     <div class="card__body">
       {pinned && <div class="card__top"><span class="badge badge--pinned">중요</span></div>}
       <h3 class="card__title">{title}</h3>

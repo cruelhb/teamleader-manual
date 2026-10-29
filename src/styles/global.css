@@ -630,40 +630,24 @@ summary:focus-visible {
 /* --------------------------------------------------------------------------
    PC 홈 포스터형 카드 (.card-list--poster, 1024px 이상)
 
-   efusioni.com 의 엇갈린 카드 배치를 참고했다. 3열로 놓고 가운데 열만
-   아래로 내려 리듬을 준다. 카드 위쪽은 문서 색으로 칠한 큰 영역에 큰 아이콘
-   (대표 이미지가 있으면 이미지)을 두고, 아래에 제목·요약을 둔다.
+   3열로 가지런히 줄을 맞춰 놓는다(2026-10-29 사용자 요청으로 엇갈림을 없앴다).
+   카드 위쪽은 문서 색으로 칠한 큰 영역에 큰 아이콘(대표 이미지가 있으면 이미지)을
+   두고, 아래에 제목·요약을 둔다.
    휴대폰은 한 화면에 여러 장 훑어볼 수 있게 위의 한 줄 카드를 그대로 쓴다.
-   열은 transform 으로만 내리므로 읽는 순서(왼쪽에서 오른쪽, 위에서 아래)는 바뀌지 않는다.
-   아주 넓은 모니터(1760px 이상)는 4열로 늘리고 물결처럼 열마다 높이를 다르게 한다.
+   아주 넓은 모니터(1760px 이상)는 4열로 늘린다.
    -------------------------------------------------------------------------- */
 
 @media (min-width: 1024px) {
   .card-list--poster {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(22px, 1.6vw, 32px);
-    padding-bottom: 56px; /* 내려간 열이 아래 내용과 겹치지 않게 */
-  }
-
-  .card-list--poster > li:nth-child(3n + 2) {
-    transform: translateY(56px);
   }
 }
 
 @media (min-width: 1760px) {
   .card-list--poster {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding-bottom: 96px;
   }
-
-  /* 3열용 엇갈림을 지우고 4열 물결(0 · 64 · 96 · 32px)로 */
-  .card-list--poster > li:nth-child(3n + 2) {
-    transform: none;
-  }
-
-  .card-list--poster > li:nth-child(4n + 2) { transform: translateY(64px); }
-  .card-list--poster > li:nth-child(4n + 3) { transform: translateY(96px); }
-  .card-list--poster > li:nth-child(4n + 4) { transform: translateY(32px); }
 }
 
 @media (min-width: 1024px) {

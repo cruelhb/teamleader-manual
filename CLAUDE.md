@@ -218,6 +218,16 @@ scripts/make-og-image.ps1      카톡 미리보기 이미지 생성 (사이트�
 - 커밋은 그냥 `git commit` 을 쓰면 된다. 전역 설정이 GitHub **noreply 이메일**로
   되어 있고, 공개 저장소라 실제 이메일이 노출되면 안 된다. `-c user.email` 로
   덮어쓰지 말 것.
+- **`.ps1` 파일은 반드시 UTF-8 BOM 으로 저장한다.** Windows PowerShell 5.1 은 BOM 이
+  없으면 cp949 로 읽어 한글 주석이 깨지고, 깨진 바이트가 줄바꿈을 먹어 **다음 줄이
+  주석에 삼켜진다**(변수가 조용히 비어 실행이 터진다). 편집 도구는 BOM 없이 저장하므로
+  `make-og-image.ps1` 을 고친 뒤에는 다시 BOM 을 붙여야 한다.
+  ```
+  $p='scripts\make-og-image.ps1'; $c=Get-Content -Raw -Encoding UTF8 $p
+  [System.IO.File]::WriteAllText((Resolve-Path $p), $c, (New-Object System.Text.UTF8Encoding $true))
+  ```
+- 커밋 메시지에 큰따옴표가 들어가면 PowerShell here-string 이 깨진다.
+  메시지를 파일에 쓰고 `git commit -F <파일>` 로 넘기면 안전하다.
 
 ### 예전 관리자 화면의 흔적
 

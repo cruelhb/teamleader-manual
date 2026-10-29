@@ -165,7 +165,10 @@ summary:focus-visible {
 
 .site-header__bar {
   display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 600px) 1fr;
+  /* 검색칸이 남는 공간을 먹고 오른쪽 글자는 제 폭만 차지한다.
+     예전처럼 검색칸에 600px 을 먼저 주면 1024~1100px 화면에서 오른쪽
+     "서면심사본부" 가 한 글자씩 세로로 쪼개졌다. */
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr) auto;
   align-items: center;
   gap: 40px;
   max-width: var(--page-max);
@@ -833,6 +836,7 @@ summary:focus-visible {
 
 .global-search {
   width: 100%;
+  max-width: 600px;
   min-width: 0;
 }
 

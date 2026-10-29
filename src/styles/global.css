@@ -43,9 +43,14 @@
   /* 움직임 — 빠르게 출발해 부드럽게 멈추는 곡선 */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* 레이아웃 */
+  /* 레이아웃
+     화면 전체 폭을 쓰고 좌우 여백만 화면 크기에 비례해 준다 (efusioni.com 처럼).
+     예전에는 1440px·960px 로 묶어 넓은 모니터에서 가운데만 쓰고 양옆이 비었다. */
   --header-height: 72px;
   --sidebar-width: 248px;
+  --page-gutter: clamp(20px, 4.5vw, 96px);
+  --page-max: 2400px;   /* 초광폭 모니터에서만 걸리는 상한 */
+  --reading-max: 1040px; /* 문서 페이지는 글줄이 너무 길어지지 않게 이 폭을 유지 */
 
   /* Pretendard 는 BaseLayout 이 CDN 에서 불러온다. 실패하면 뒤의 기기 글꼴로 보인다. */
   --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
@@ -162,11 +167,11 @@ summary:focus-visible {
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 600px) 1fr;
   align-items: center;
-  gap: 32px;
-  max-width: 1440px;
+  gap: 40px;
+  max-width: var(--page-max);
   height: var(--header-height);
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 var(--page-gutter);
 }
 
 .site-header__logo {
@@ -206,10 +211,10 @@ summary:focus-visible {
 .docs-shell {
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-  gap: 40px;
-  max-width: 1440px;
+  gap: clamp(32px, 3vw, 64px);
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 var(--page-gutter);
 }
 
 .docs-sidebar {
@@ -225,7 +230,6 @@ summary:focus-visible {
 .docs-content {
   min-width: 0;
   width: 100%;
-  max-width: 960px;
 }
 
 .docs-content main {
@@ -406,7 +410,7 @@ summary:focus-visible {
   flex-wrap: wrap;
   gap: 0 0.3em;
   margin: 0;
-  font-size: clamp(2.3rem, 5.2vw, 4rem);
+  font-size: clamp(2.3rem, 4.4vw, 5.2rem);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.055em;
@@ -603,19 +607,39 @@ summary:focus-visible {
    아래로 내려 리듬을 준다. 카드 위쪽은 문서 색으로 칠한 큰 영역에 큰 아이콘
    (대표 이미지가 있으면 이미지)을 두고, 아래에 제목·요약을 둔다.
    휴대폰은 한 화면에 여러 장 훑어볼 수 있게 위의 한 줄 카드를 그대로 쓴다.
-   가운데 열은 transform 으로만 내리므로 읽는 순서(1·2·3 / 4·5·6)는 바뀌지 않는다.
+   열은 transform 으로만 내리므로 읽는 순서(왼쪽에서 오른쪽, 위에서 아래)는 바뀌지 않는다.
+   아주 넓은 모니터(1760px 이상)는 4열로 늘리고 물결처럼 열마다 높이를 다르게 한다.
    -------------------------------------------------------------------------- */
 
 @media (min-width: 1024px) {
   .card-list--poster {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px;
-    padding-bottom: 56px; /* 내려간 가운데 열이 아래 내용과 겹치지 않게 */
+    gap: clamp(22px, 1.6vw, 32px);
+    padding-bottom: 56px; /* 내려간 열이 아래 내용과 겹치지 않게 */
   }
 
   .card-list--poster > li:nth-child(3n + 2) {
     transform: translateY(56px);
   }
+}
+
+@media (min-width: 1760px) {
+  .card-list--poster {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-bottom: 96px;
+  }
+
+  /* 3열용 엇갈림을 지우고 4열 물결(0 · 64 · 96 · 32px)로 */
+  .card-list--poster > li:nth-child(3n + 2) {
+    transform: none;
+  }
+
+  .card-list--poster > li:nth-child(4n + 2) { transform: translateY(64px); }
+  .card-list--poster > li:nth-child(4n + 3) { transform: translateY(96px); }
+  .card-list--poster > li:nth-child(4n + 4) { transform: translateY(32px); }
+}
+
+@media (min-width: 1024px) {
 
   .card-list--poster .card {
     flex-direction: column;
@@ -973,6 +997,31 @@ summary:focus-visible {
 .doc {
   display: grid;
   gap: 12px;
+  max-width: var(--reading-max);
+}
+
+/* 넓은 모니터(1600px 이상)에서는 "이 문서에서 찾기"를 오른쪽 열에 붙여 두어
+   본문 글줄 길이는 유지하면서 남는 오른쪽 공간을 쓴다. 스크롤해도 따라온다. */
+@media (min-width: 1600px) {
+  .doc {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    column-gap: 24px;
+    max-width: calc(var(--reading-max) + 324px);
+  }
+
+  .doc > * {
+    grid-column: 1;
+  }
+
+  .doc > .doc-toc {
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+    grid-column: 2;
+    grid-row: 2 / span 5;
+    align-self: start;
+    max-height: calc(100dvh - var(--header-height) - 48px);
+    overflow-y: auto;
+  }
 }
 
 .doc-panel {

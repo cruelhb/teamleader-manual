@@ -8,7 +8,7 @@
 
 | | 주소 |
 | --- | --- |
-| 🌐 사이트 | <https://teamleader-manual.pages.dev> |
+| 🌐 사이트 | <https://guidebook.hb-913.com> (예전 주소 <https://teamleader-manual.pages.dev> 도 작동) |
 | 📦 저장소 | <https://github.com/cruelhb/teamleader-manual> |
 
 `main` 브랜치에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포합니다.

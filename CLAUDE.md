@@ -34,7 +34,7 @@
 
 | | 주소 |
 | --- | --- |
-| 사이트 | <https://teamleader-manual.pages.dev> |
+| 사이트 | <https://guidebook.hb-913.com> (2026-10-30~ 개인 도메인. 예전 주소 <https://teamleader-manual.pages.dev> 도 계속 작동, `astro.config.mjs` `site`도 새 주소) |
 | 저장소 (**공개**) | <https://github.com/cruelhb/teamleader-manual> |
 
 `main` 에 푸시하면 Cloudflare Pages가 1~2분 내 자동 배포한다.

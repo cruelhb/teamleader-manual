@@ -34,10 +34,10 @@ test('접힌 항목 ID는 요약 힌트와 무관하고 기존 ID·중복 제목
   assert.equal(first.properties.id,'section-신청-방법-2');
   assert.equal(second.properties.id,'section-신청-방법-3');
 });
-test('빌드한 경조사 HTML에 접힌 항목 링크와 요약이 포함된다', () => {
+test('빌드한 경조사 HTML에 접힌 항목 링크가 있고 핵심 요약 카드는 없다', () => {
   const html=readFileSync(new URL('../dist/경조사-안내/index.html',import.meta.url),'utf8');
   assert.match(html, /id="section-신청-방법과-기한"/);
-  assert.match(html, /핵심 요약/);
+  assert.doesNotMatch(html, /quick-summary|핵심 요약/);
   const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
   assert.equal(new Set(ids).size, ids.length);
 });

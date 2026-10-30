@@ -1006,7 +1006,7 @@ summary:focus-visible {
 
 /* ==========================================================================
    문서 페이지 (DocLayout.astro)
-   제목 · 핵심 요약 · 목차 · 본문 · 관련 문서를 각각 둥근 카드로 쌓는다.
+   제목 · 목차 · 본문 · 관련 문서를 각각 둥근 카드로 쌓는다.
    ========================================================================== */
 
 .doc {
@@ -1129,49 +1129,10 @@ summary:focus-visible {
   font-weight: 600;
 }
 
-/* 핵심 요약 — 파란 기운의 카드 */
-.quick-summary {
-  padding: 24px 28px;
-  border-radius: var(--radius-lg);
-  background: var(--brand-soft);
-}
-
-.quick-summary h2,
 .related-docs h2 {
   margin: 0 0 12px;
   font-size: 1rem;
   font-weight: 700;
-}
-
-.quick-summary h2 {
-  color: var(--brand-strong);
-}
-
-.quick-summary dl {
-  margin: 0;
-}
-
-.quick-summary dl > div {
-  display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
-  gap: 12px;
-  padding: 10px 0;
-}
-
-.quick-summary dl > div + div {
-  border-top: 1px solid rgba(37, 99, 235, 0.12);
-}
-
-.quick-summary dt {
-  color: var(--brand-strong);
-  font-size: 0.84rem;
-  font-weight: 650;
-}
-
-.quick-summary dd {
-  margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.75;
 }
 
 /* 이 문서에서 찾기 (목차) */
@@ -2098,15 +2059,6 @@ summary:focus-visible {
 
   .doc-panel {
     padding: 22px 18px;
-  }
-
-  .quick-summary {
-    padding: 20px 18px;
-  }
-
-  .quick-summary dl > div {
-    grid-template-columns: 1fr;
-    gap: 2px;
   }
 
   .doc-toc > summary {

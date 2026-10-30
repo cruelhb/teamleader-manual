@@ -12,7 +12,6 @@ interface Props {
   updated: Date | string;
   source?: string;
   file?: string;
-  quickSummary?: { audience?: string; keyPoint?: string; action?: string } | null;
   relatedDocs?: Array<{ url: string; title: string; summary: string }>;
   /** 제목 왼쪽 아이콘. 홈 카드와 같은 것 */
   icon?: IconName;
@@ -20,10 +19,7 @@ interface Props {
   tone?: string;
 }
 
-const { title, summary, updated, source, file, quickSummary, relatedDocs = [], icon = 'guide', tone = 'blue' } = Astro.props;
-const summaryRows = [
-  ['대상', quickSummary?.audience], ['핵심 기준', quickSummary?.keyPoint], ['처리 방법', quickSummary?.action],
-].filter(([, value]) => value);
+const { title, summary, updated, source, file, relatedDocs = [], icon = 'guide', tone = 'blue' } = Astro.props;
 
 // 본문에서 <i class="ico ico--이름"></i> 로 쓰는 아이콘의 모양 정의.
 // 문서 페이지에서만 필요하므로 여기서만 심는다.
@@ -41,7 +37,7 @@ const iconCss = bodyIconCss();
       </a>
     </p>
 
-    {/* 제목 · 핵심 요약 · 목차 · 본문 · 관련 문서를 각각 둥근 카드로 쌓는다 */}
+    {/* 제목 · 목차 · 본문 · 관련 문서를 각각 둥근 카드로 쌓는다 */}
     <header class="doc-panel" data-reveal>
       <div class="doc__heading">
         <span class={`doc__icon tone-${tone}`}><Icon name={icon} size={24} /></span>
@@ -53,10 +49,6 @@ const iconCss = bodyIconCss();
       </div>
     </header>
 
-    {summaryRows.length > 0 && <section class="quick-summary" aria-labelledby="quick-summary-title" data-reveal>
-      <h2 id="quick-summary-title">핵심 요약</h2>
-      <dl>{summaryRows.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-    </section>}
     <DocTools />
 
     <div class="doc-panel" data-reveal>

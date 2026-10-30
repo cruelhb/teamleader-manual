@@ -30,12 +30,7 @@ const docSchema = z.object({
   /** 한 줄 요약. 검색 결과와 카카오톡 미리보기에 그대로 노출된다. */
   summary: z.string(),
 
-  /** 본문과 함께 관리하는 핵심 요약. 비어 있는 항목은 표시하지 않는다. */
-  quickSummary: z.object({
-    audience: optionalString,
-    keyPoint: optionalString,
-    action: optionalString,
-  }).nullish(),
+  /** 함께 보면 좋은 문서 경로 (최대 3개) */
   relatedDocs: z.array(z.string().regex(/^\/[^/?#]+\/$/))
     .max(3).nullish().transform((value) => value ?? []),
 

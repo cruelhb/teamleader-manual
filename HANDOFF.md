@@ -157,7 +157,7 @@
 
 - 서면심사본부 직원이 휴대폰에서 공통 규정·공지·매뉴얼을 찾고 카카오톡으로 링크를 공유하는 사이트.
 - Astro 5 정적 사이트 + Markdown 콘텐츠. 글 수정은 Claude Code가 파일을 직접 고친다. 업무용 서버·DB 없음.
-- 운영 주소: https://teamleader-manual.pages.dev
+- 운영 주소: https://guidebook.hb-913.com (2026-10-30~ 개인 도메인. 예전 주소 https://teamleader-manual.pages.dev 도 계속 작동)
 - 저장소: https://github.com/cruelhb/teamleader-manual
 - `main` 푸시 시 Cloudflare Pages 자동 배포. 후속 세션에서 GitHub의 Cloudflare Pages 검사 성공과 운영 사이트 반영을 확인했다.
 - 사용자는 비개발자 팀장. 한국어, 쉬운 설명, 실제 결과 확인을 선호한다.
